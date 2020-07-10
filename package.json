@@ -20,9 +20,13 @@
   },
   "homepage": "https://github.com/StablePay/sdk_l2#readme",
   "devDependencies": {
-    "ts-jest": "^26.1.1",
+    "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
+    "ts-jest": "^26.1.1",
     "typescript": "^3.9.6"
   },
-  "dependencies": {}
+  "dependencies": {
+    "ethers": "^5.0.5",
+    "zksync": "^0.5.14"
+  }
 }

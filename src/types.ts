@@ -16,12 +16,15 @@ type Operation = {
 };
 
 type Deposit = Operation & {
+  tokenSymbol: "ETH";
   type: OperationType.Deposit;
 };
 type Transfer = Operation & {
+  tokenSymbol: "ETH";
   type: OperationType.Transfer;
 };
 type Withdrawal = Operation & {
+  tokenSymbol: "ETH";
   type: OperationType.Withdrawal;
 };
 
