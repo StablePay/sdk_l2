@@ -44,7 +44,7 @@ test("obtain provider", async () => {
 
   const provider = await providerManager.getProviderByLayer2Type(
     Layer2Type.ZK_SYNC,
-    "ropsten"
+    "rinkeby"
   );
 
   expect(provider.getSupportedLayer2Type()).toBe(Layer2Type.ZK_SYNC);
