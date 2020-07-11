@@ -1,6 +1,7 @@
 import * as zksync from "zksync";
 import { ZkSyncDepositResult } from "../src/zksync/ZkSyncResult";
-import { OperationType, Deposit } from "../src/types";
+import { OperationType, Deposit, Layer2Type } from "../src/types";
+import { StablePayLayer2Manager } from "../src/StablePayLayer2Manager";
 
 test("depositResult", async () => {
   const fakeDepositResultHolder: any = {
@@ -36,4 +37,16 @@ test("depositResult", async () => {
   expect(receipt.tokenSymbol).toBe("ETH");
   expect(receipt.committed).toBeTruthy();
   expect(receipt.verified).toBeTruthy();
+});
+
+test("obtain provider", async () => {
+  const providerManager = StablePayLayer2Manager.Instance;
+
+  const provider = await providerManager.getProviderByLayer2Type(
+    Layer2Type.ZK_SYNC,
+    "ropsten"
+  );
+
+  expect(provider.getSupportedLayer2Type()).toBe(Layer2Type.ZK_SYNC);
+  expect(provider.getName().length).toBeGreaterThan(0);
 });

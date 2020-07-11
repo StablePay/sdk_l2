@@ -2,20 +2,23 @@ import { StablePayLayer2Provider } from "StablePayLayer2Provider";
 import { Wallet } from "Wallet";
 import { AccountStream } from "AccountStream";
 import { ZkSyncDepositResult } from "./ZkSyncResult";
-import { Layer2Type, Receipt, Deposit, Transfer, Withdrawal } from "types";
+import { Layer2Type, Receipt, Deposit, Transfer, Withdrawal } from "../types";
 
 const zksync = require("zksync");
 const ethers = require("ethers");
 
+export async function getZkSyncProvider(
+  network: string
+): Promise<StablePayLayer2Provider> {
+  return ZkSyncStablePayLayer2Provider.newInstance(network);
+}
+
 class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
-  private readonly network: string;
-  private readonly syncProvider: any;
-  private readonly syncWallet: any;
-  private constructor(network: string, syncProvider: any, syncWallet: any) {
-    this.network = network;
-    this.syncProvider = syncProvider;
-    this.syncWallet = syncWallet;
-  }
+  private constructor(
+    private network: string,
+    private syncProvider: any,
+    private syncWallet: any
+  ) {}
 
   public static async newInstance(
     network: string
