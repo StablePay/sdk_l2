@@ -1,71 +1,91 @@
-enum Layer2Type {
+export enum Layer2Type {
   ZK_SYNC = "ZK_SYNC",
   LOOPRING = "LRC",
 }
 
-enum OperationType {
+export enum OperationType {
   Deposit = "Deposit",
   Transfer = "Transfer",
   Withdrawal = "Withdrawal",
 }
 
-type Operation = {
+type GeneralProps = {
   toAddress: string;
   amount: string;
   fee: string;
-};
-
-type Deposit = Operation & {
-  tokenSymbol: "ETH";
-  type: OperationType.Deposit;
-};
-type Transfer = Operation & {
-  tokenSymbol: "ETH";
-  type: OperationType.Transfer;
-};
-type Withdrawal = Operation & {
-  tokenSymbol: "ETH";
-  type: OperationType.Withdrawal;
-};
-
-type TokenDeposit = Deposit & {
   tokenSymbol: string;
+};
+
+type DepositProps = GeneralProps & {
   approveForErc20: boolean;
 };
 
-type TokenTransfer = Transfer & {
-  tokenSymbol: string;
+type OperationProps = GeneralProps & {
+  type: OperationType;
 };
 
-type TokenWithdrawal = Withdrawal & {
-  tokenSymbol: string;
-};
+export abstract class Operation {
+  public readonly type: OperationType;
+  public readonly toAddress: string;
+  public readonly amount: string;
+  public readonly fee: string;
+  public readonly tokenSymbol: string;
 
-type Receipt = {
-  operationType: any;
-  from: string;
+  constructor({ type, toAddress, amount, fee, tokenSymbol }: OperationProps) {
+    this.type = type;
+    this.toAddress = toAddress;
+    this.amount = amount;
+    this.fee = fee;
+    this.tokenSymbol = tokenSymbol;
+  }
+}
+
+export class Deposit extends Operation {
+  public readonly approveForErc20: boolean;
+  public static createDeposit(props: {
+    toAddress: string;
+    amount: string;
+    fee: string;
+  }) {
+    return new Deposit({
+      ...props,
+      tokenSymbol: "ETH",
+      approveForErc20: false,
+    });
+  }
+  public static createTokenDeposit(props: DepositProps) {
+    return new Deposit({ ...props });
+  }
+  private constructor(props: DepositProps) {
+    super({ ...props, type: OperationType.Deposit });
+    this.approveForErc20 = props.approveForErc20;
+  }
+}
+
+export class Transfer extends Operation {
+  constructor(props: GeneralProps) {
+    super({ ...props, type: OperationType.Transfer });
+  }
+}
+export class Withdrawal extends Operation {
+  constructor(props: GeneralProps) {
+    super({ ...props, type: OperationType.Withdrawal });
+  }
+}
+
+export type Receipt = {
+  operationType: OperationType;
+  from?: string;
   to: string;
   tokenSymbol: string; // ETH in case of no token
   amount: string;
   fee: string;
-  blockNumber: number;
-  nonce: number;
-  hash: string;
-  createdAt: string;
+  blockNumber?: number;
+  nonce?: number;
+  hash?: string;
+  createdAt?: string;
   failReason?: string;
-  committed: boolean;
-  verified: boolean;
+  committed?: boolean;
+  verified?: boolean;
   l2_data?: any;
-};
-
-type DepositReceipt = Receipt & {
-  operationType: OperationType.Deposit;
-};
-
-type TransferReceipt = Receipt & {
-  operationType: OperationType.Transfer;
-};
-
-type WithdrawalReceipt = Receipt & {
-  operationType: OperationType.Withdrawal;
 };

@@ -12,6 +12,14 @@ TODO
 
 TODO
 
+## Running unit tests
+
+To run unit tests, within the project's root directory, just run
+
+```bash
+$ npx jest
+```
+
 ## Acknowledgments
 
 - Grant by [MakerDao](https://makerdao.com/en/)

@@ -1,6 +1,8 @@
 import { StablePayLayer2Provider } from "StablePayLayer2Provider";
 import { Wallet } from "Wallet";
 import { AccountStream } from "AccountStream";
+import { ZkSyncDepositResult } from "./ZkSyncResult";
+import { Layer2Type, Receipt, Deposit, Transfer, Withdrawal } from "types";
 
 const zksync = require("zksync");
 const ethers = require("ethers");
@@ -8,12 +10,11 @@ const ethers = require("ethers");
 class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
   private readonly network: string;
   private readonly syncProvider: any;
-  private readonly syncWSProvider: any;
-  private readonly ethersProvider: any;
   private readonly syncWallet: any;
   private constructor(network: string, syncProvider: any, syncWallet: any) {
     this.network = network;
     this.syncProvider = syncProvider;
+    this.syncWallet = syncWallet;
   }
 
   public static async newInstance(
@@ -90,11 +91,14 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
     throw new Error("Method not implemented.");
   }
   async deposit(deposit: Deposit): Promise<DepositResult> {
+    // The result of depositToSyncFromEthereum is of a class "ETHOperation".
+    // Such class is not exported. Need to use 'any' here.
     const zkSyncDeposit = await this.syncWallet.depositToSyncFromEthereum({
       depositTo: this.syncWallet.address(),
       token: deposit.tokenSymbol,
       amount: ethers.utils.parseEther(deposit.amount),
     });
+    return new ZkSyncDepositResult(zkSyncDeposit, deposit);
   }
   transfer(transfer: Transfer): Promise<TransferResult> {
     throw new Error("Method not implemented.");

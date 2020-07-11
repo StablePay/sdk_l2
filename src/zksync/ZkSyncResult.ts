@@ -1,31 +1,40 @@
 import * as zksync from "zksync";
+import { Deposit, Receipt, OperationType } from "../types";
 
 export class ZkSyncDepositResult implements DepositResult {
-  private resultHolder: any;
+  // This result holder has to be of type 'any' since the corresponding
+  // class from zkSync is not exported. (class ETHOperation from wallet.ts)
+  private zkSyncDepositResultHolder: any;
+  private deposit: Deposit;
 
-  constructor(resultHolder: any) {
-    this.resultHolder = resultHolder;
-    // zksync.types.PriorityOperationReceipt;
+  constructor(depositResultHolder: any, deposit: Deposit) {
+    this.zkSyncDepositResultHolder = depositResultHolder;
+    this.deposit = deposit;
   }
 
-  async getReceipt(): Promise<DepositReceipt> {
-    const zkSyncDepositReceipt = await this.resultHolder.awaitReceipt();
-    /*
-    export interface PriorityOperationReceipt {
-      executed: boolean;
-      block?: BlockInfo;
+  getReceipt(): Promise<Receipt> {
+    return this.getReceiptInternal(false);
   }
-  export interface BlockInfo {
-    blockNumber: number;
-    committed: boolean;
-    verified: boolean;
-}
 
-  */
-
-    throw new Error("Method not implemented.");
+  getReceiptVerify(): Promise<Receipt> {
+    return this.getReceiptInternal(true);
   }
-  getReceiptVerify(): Promise<DepositReceipt> {
-    throw new Error("Method not implemented.");
+
+  async getReceiptInternal(doVerify: boolean): Promise<Receipt> {
+    const zkSyncDepositReceipt: zksync.types.PriorityOperationReceipt = doVerify
+      ? await this.zkSyncDepositResultHolder.awaitReceiptVerify()
+      : await this.zkSyncDepositResultHolder.awaitReceipt();
+    const result: Receipt = {
+      to: this.deposit.toAddress,
+      tokenSymbol: this.deposit.tokenSymbol, // ETH in case of no token
+      amount: this.deposit.amount,
+      fee: this.deposit.fee,
+      blockNumber: zkSyncDepositReceipt.block?.blockNumber,
+      committed: zkSyncDepositReceipt.block?.committed,
+      verified: zkSyncDepositReceipt.block?.verified,
+      operationType: OperationType.Deposit,
+    };
+
+    return result;
   }
 }
