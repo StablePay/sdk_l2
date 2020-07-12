@@ -9,5 +9,17 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "outDir": "dist/"
-  }
+  },
+  "exclude": [
+    "dist",
+    "out",
+    "node_modules",
+    "next.config.js",
+    "postcss.config.js",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "coverage"
+  ]
 }

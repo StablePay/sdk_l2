@@ -10,8 +10,8 @@
     "test": "NODE_ENV=test jest",
     "test:dev": "NODE_ENV=test jest --watchAll",
     "build": "tsc --project tsconfig.json",
-    "prettier": "prettier  --write **/*.{ts,tsx,js,jsx}",
-    "lint:ts": "npm run prettier && tslint -c tslint.json -t stylish --fix {src}/**/*.{ts,tsx}"
+    "prettier": "prettier  --write **/*.{ts,js}",
+    "lint:ts": "npm run prettier && tslint -c tslint.json -t stylish --fix {src}/**/*.{ts}"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/StablePay/sdk_l2#readme",
   "devDependencies": {
-    "@types/bn.js": "^4.11.6",
     "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
     "prettier": "^2.0.5",

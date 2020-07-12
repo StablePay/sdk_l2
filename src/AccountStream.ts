@@ -1,5 +1,5 @@
-import { Receipt } from "./types";
+import { Receipt } from './types'
 
 export interface AccountStream {
-  onEvent(cb: (receipt: Receipt) => void): void;
+  onEvent(cb: (receipt: Receipt) => void): void
 }
