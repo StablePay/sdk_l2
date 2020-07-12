@@ -1,4 +1,4 @@
-export type Network = 'localhost' | 'rinkeby' | 'ropsten' | 'mainnet'
+export type Network = 'localhost' | 'rinkeby' | 'ropsten' | 'mainnet';
 
 export enum Layer2Type {
   ZK_SYNC = 'ZK_SYNC',
@@ -12,52 +12,52 @@ export enum OperationType {
 }
 
 export type GeneralProps = {
-  toAddress: string
-  amount: string
-  fee: string
-  tokenSymbol: string
-}
+  toAddress: string;
+  amount: string;
+  fee: string;
+  tokenSymbol: string;
+};
 
 export type DepositProps = GeneralProps & {
-  approveForErc20: boolean
-}
+  approveForErc20: boolean;
+};
 
 export type OperationProps = GeneralProps & {
-  type: OperationType
-}
+  type: OperationType;
+};
 
 export type Receipt = {
-  operationType: OperationType
-  from?: string
-  to: string
-  tokenSymbol: string // ETH in case of no token
-  amount: string
-  fee: string
-  blockNumber?: number
-  nonce?: number
-  hash?: string
-  createdAt?: string
-  failReason?: string
-  committed?: boolean
-  verified?: boolean
-  l2_data?: any
-}
+  operationType: OperationType;
+  from?: string;
+  to: string;
+  tokenSymbol: string; // ETH in case of no token
+  amount: string;
+  fee: string;
+  blockNumber?: number;
+  nonce?: number;
+  hash?: string;
+  createdAt?: string;
+  failReason?: string;
+  committed?: boolean;
+  verified?: boolean;
+  l2_data?: any;
+};
 
 export interface Result {
-  getReceipt(): Promise<Receipt>
-  getReceiptVerify(): Promise<Receipt>
+  getReceipt(): Promise<Receipt>;
+  getReceiptVerify(): Promise<Receipt>;
 }
 export interface DepositResult extends Result {
-  getReceipt(): Promise<Receipt>
-  getReceiptVerify(): Promise<Receipt>
+  getReceipt(): Promise<Receipt>;
+  getReceiptVerify(): Promise<Receipt>;
 }
 
 export interface TransferResult extends Result {
-  getReceipt(): Promise<Receipt>
-  getReceiptVerify(): Promise<Receipt>
+  getReceipt(): Promise<Receipt>;
+  getReceiptVerify(): Promise<Receipt>;
 }
 
 export interface WithdrawalResult extends Result {
-  getReceipt(): Promise<Receipt>
-  getReceiptVerify(): Promise<Receipt>
+  getReceipt(): Promise<Receipt>;
+  getReceiptVerify(): Promise<Receipt>;
 }
