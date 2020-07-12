@@ -1,5 +1,5 @@
 import { StablePayLayer2Provider } from "StablePayLayer2Provider";
-import { Layer2Type } from "./types";
+import { Layer2Type, Network } from "./types";
 import { getZkSyncProvider } from "./zksync/ZkSyncStablePayLayer2Provider";
 
 export class StablePayLayer2Manager {
@@ -19,7 +19,7 @@ export class StablePayLayer2Manager {
 
   async getProviderByLayer2Type(
     layer2Type: Layer2Type,
-    network: string
+    network: Network
   ): Promise<StablePayLayer2Provider> {
     const key = `${layer2Type}:${network}`;
     try {

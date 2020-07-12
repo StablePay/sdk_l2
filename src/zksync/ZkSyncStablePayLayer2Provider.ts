@@ -1,38 +1,46 @@
 import { StablePayLayer2Provider } from "StablePayLayer2Provider";
+import * as zksync from "zksync";
+import ethers from "ethers";
 import { Wallet } from "Wallet";
 import { AccountStream } from "AccountStream";
 import { ZkSyncDepositResult } from "./ZkSyncResult";
-import { Layer2Type, Receipt, Deposit, Transfer, Withdrawal } from "../types";
+import { 
+  Layer2Type, 
+  Receipt, 
+  DepositResult, 
+  TransferResult, 
+  WithdrawalResult,
+  Network
+} from "../types";
+import { Deposit, Transfer, Withdrawal } from "../Operation";
 
-const zksync = require("zksync");
-const ethers = require("ethers");
 
 export async function getZkSyncProvider(
-  network: string
+  network: Network
 ): Promise<StablePayLayer2Provider> {
   return ZkSyncStablePayLayer2Provider.newInstance(network);
 }
 
 class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
   private constructor(
-    private network: string,
+    private network: Network,
     private syncProvider: any,
     private syncWallet: any
   ) {}
 
   public static async newInstance(
-    network: string
+    network: Network
   ): Promise<StablePayLayer2Provider> {
     return new Promise((resolve, reject) => {
       zksync
         .getDefaultProvider(network)
         .then((syncProvider: any) => {
-          const ethersProvider = new ethers.getDefaultProvider(network);
+          const ethersProvider = ethers.getDefaultProvider(network);
 
           // TODO: Obtain master key from other methods rather than the
           // mnemonics
           const ethWallet = ethers.Wallet.fromMnemonic("MNEMONIC").connect(
-            ethersProvider.ethersProvider
+            ethersProvider
           );
 
           zksync.Wallet.fromEthSigner(ethWallet, syncProvider)

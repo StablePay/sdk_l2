@@ -1,5 +1,6 @@
 import * as zksync from "zksync";
-import { Deposit, Receipt, OperationType } from "../types";
+import { Receipt, OperationType, DepositResult } from "../types";
+import { Deposit } from "../Operation";
 
 export class ZkSyncDepositResult implements DepositResult {
   // This result holder has to be of type 'any' since the corresponding
