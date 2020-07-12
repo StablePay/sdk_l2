@@ -1,6 +1,7 @@
 import { Wallet } from "Wallet";
 import { AccountStream } from "AccountStream";
-import { Layer2Type, Receipt, Deposit, Transfer, Withdrawal } from "types";
+import { Layer2Type, Receipt } from "types";
+import { Deposit, Transfer, Withdrawal } from "Operation";
 
 export interface StablePayLayer2Provider {
   getName(): string;

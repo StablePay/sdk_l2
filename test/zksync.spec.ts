@@ -1,6 +1,7 @@
 import * as zksync from "zksync";
 import { ZkSyncDepositResult } from "../src/zksync/ZkSyncResult";
-import { OperationType, Deposit, Layer2Type } from "../src/types";
+import { OperationType, Layer2Type } from "../src/types";
+import { Deposit } from "../src/Operation";
 import { StablePayLayer2Manager } from "../src/StablePayLayer2Manager";
 
 test("depositResult", async () => {
