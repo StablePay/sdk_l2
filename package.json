@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/StablePay/sdk_l2#readme",
   "devDependencies": {
+    "@types/bn.js": "^4.11.6",
     "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
     "prettier": "^2.0.5",
