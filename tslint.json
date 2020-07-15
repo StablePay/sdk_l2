@@ -1,11 +1,8 @@
 {
-  "extends": [
-    "tslint:latest",
-    "tslint-eslint-rules",
-    "tslint-config-prettier"
-  ],
+  "extends": ["tslint:latest", "tslint-eslint-rules", "tslint-config-prettier"],
   "rules": {
     "curly": [true, "ignore-same-line"],
+    "quotemark": "double",
     "ordered-imports": false,
     "no-submodule-imports": false,
     "no-implicit-dependencies": false,

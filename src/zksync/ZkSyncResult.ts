@@ -1,17 +1,11 @@
-import * as zksync from "zksync";
-import { Receipt, OperationType, DepositResult } from "../types";
-import { Deposit } from "../Operation";
+import * as zksync from 'zksync';
+import { Receipt, Result } from '../types';
+import { Operation } from '../Operation';
 
-export class ZkSyncDepositResult implements DepositResult {
+export class ZkSyncResult implements Result {
   // This result holder has to be of type 'any' since the corresponding
   // class from zkSync is not exported. (class ETHOperation from wallet.ts)
-  private zkSyncDepositResultHolder: any;
-  private deposit: Deposit;
-
-  constructor(depositResultHolder: any, deposit: Deposit) {
-    this.zkSyncDepositResultHolder = depositResultHolder;
-    this.deposit = deposit;
-  }
+  constructor(private resultHolder: any, private operation: Operation) {}
 
   getReceipt(): Promise<Receipt> {
     return this.getReceiptInternal(false);
@@ -21,19 +15,19 @@ export class ZkSyncDepositResult implements DepositResult {
     return this.getReceiptInternal(true);
   }
 
-  async getReceiptInternal(doVerify: boolean): Promise<Receipt> {
-    const zkSyncDepositReceipt: zksync.types.PriorityOperationReceipt = doVerify
-      ? await this.zkSyncDepositResultHolder.awaitReceiptVerify()
-      : await this.zkSyncDepositResultHolder.awaitReceipt();
+  private async getReceiptInternal(doVerify: boolean): Promise<Receipt> {
+    const zkSyncReceipt: zksync.types.PriorityOperationReceipt = doVerify
+      ? await this.resultHolder.awaitReceiptVerify()
+      : await this.resultHolder.awaitReceipt();
     const result: Receipt = {
-      to: this.deposit.toAddress,
-      tokenSymbol: this.deposit.tokenSymbol, // ETH in case of no token
-      amount: this.deposit.amount,
-      fee: this.deposit.fee,
-      blockNumber: zkSyncDepositReceipt.block?.blockNumber,
-      committed: zkSyncDepositReceipt.block?.committed,
-      verified: zkSyncDepositReceipt.block?.verified,
-      operationType: OperationType.Deposit,
+      to: this.operation.toAddress,
+      tokenSymbol: this.operation.tokenSymbol, // ETH in case of no token
+      amount: this.operation.amount,
+      fee: this.operation.fee,
+      blockNumber: zkSyncReceipt.block?.blockNumber,
+      committed: zkSyncReceipt.block?.committed,
+      verified: zkSyncReceipt.block?.verified,
+      operationType: this.operation.type,
     };
 
     return result;

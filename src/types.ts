@@ -47,17 +47,3 @@ export interface Result {
   getReceipt(): Promise<Receipt>;
   getReceiptVerify(): Promise<Receipt>;
 }
-export interface DepositResult extends Result {
-  getReceipt(): Promise<Receipt>;
-  getReceiptVerify(): Promise<Receipt>;
-}
-
-export interface TransferResult extends Result {
-  getReceipt(): Promise<Receipt>;
-  getReceiptVerify(): Promise<Receipt>;
-}
-
-export interface WithdrawalResult extends Result {
-  getReceipt(): Promise<Receipt>;
-  getReceiptVerify(): Promise<Receipt>;
-}

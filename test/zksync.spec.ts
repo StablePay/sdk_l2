@@ -1,5 +1,5 @@
 import * as zksync from 'zksync';
-import { ZkSyncDepositResult } from '../src/zksync/ZkSyncResult';
+import { ZkSyncResult } from '../src/zksync/ZkSyncResult';
 import { OperationType, Layer2Type } from '../src/types';
 import { Deposit } from '../src/Operation';
 import { StablePayLayer2Manager } from '../src/StablePayLayer2Manager';
@@ -24,7 +24,7 @@ test('depositResult', async () => {
     amount: '666.777',
     fee: '0.01',
   });
-  const fakeDepositResult = new ZkSyncDepositResult(
+  const fakeDepositResult = new ZkSyncResult(
     fakeDepositResultHolder,
     fakeDeposit
   );
