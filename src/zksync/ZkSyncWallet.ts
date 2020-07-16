@@ -1,14 +1,18 @@
 import { ZkSyncResult } from './ZkSyncResult';
 import { Layer2Type, Receipt, Result, Network } from '../types';
 import { Deposit, Transfer, Withdrawal } from '../Operation';
-import { Wallet } from '../Wallet';
+import { Layer2Wallet } from '../Layer2Wallet';
 import { AccountStream } from '../AccountStream';
 
 import * as zksync from 'zksync';
 import ethers from 'ethers';
 
-export class ZkSyncWallet implements Wallet {
+export class ZkSyncLayer2Wallet implements Layer2Wallet {
   constructor(private syncWallet: zksync.Wallet) {}
+
+  getAddress(): string {
+    throw new Error('Method not implemented.');
+  }
 
   getTokenBalances(): Promise<[[string, string, boolean]]> {
     throw new Error('Method not implemented.');

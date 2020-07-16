@@ -1,8 +1,8 @@
 import { StablePayLayer2Provider } from 'StablePayLayer2Provider';
 import * as zksync from 'zksync';
 import { Layer2Type, Receipt, Network } from '../types';
-import { ZkSyncWalletBuilder } from './ZkSyncWalletBuilder';
-import { WalletBuilder } from 'WalletBuilder';
+import { ZkSyncLayer2WalletBuilder } from './ZkSyncLayer2WalletBuilder';
+import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
 
 export async function getZkSyncProvider(
   network: Network
@@ -11,13 +11,13 @@ export async function getZkSyncProvider(
 }
 
 class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
-  private walletBuilder: WalletBuilder;
+  private walletBuilder: Layer2WalletBuilder;
 
   private constructor(
     private network: Network,
     private syncProvider: zksync.Provider
   ) {
-    this.walletBuilder = new ZkSyncWalletBuilder(
+    this.walletBuilder = new ZkSyncLayer2WalletBuilder(
       this.network,
       this.syncProvider
     );
@@ -45,7 +45,7 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
     return 'Layer 2 provider for zkSync by StablePay';
   }
 
-  getWalletBuilder(): WalletBuilder {
+  getWalletBuilder(): Layer2WalletBuilder {
     return this.walletBuilder;
   }
 

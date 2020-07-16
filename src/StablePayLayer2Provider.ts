@@ -1,4 +1,4 @@
-import { WalletBuilder } from 'WalletBuilder';
+import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
 import { Layer2Type, Receipt } from 'types';
 
 export interface StablePayLayer2Provider {
@@ -21,7 +21,7 @@ export interface StablePayLayer2Provider {
    *
    * @returns Wallet builder for this layer-2 provider instance.
    */
-  getWalletBuilder(): WalletBuilder;
+  getWalletBuilder(): Layer2WalletBuilder;
 
   /**
    * Get the layer-2 vendor that this layer-2 provider instance supports.

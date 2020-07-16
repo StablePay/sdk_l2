@@ -1,6 +1,6 @@
 import { Receipt } from './types';
 
-interface Result {
+export interface Result {
   getReceipt(): Promise<Receipt>;
   getReceiptVerify(): Promise<Receipt>;
 }

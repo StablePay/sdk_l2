@@ -2,7 +2,9 @@ import { AccountStream } from 'AccountStream';
 import { Result } from 'types';
 import { Deposit, Transfer, Withdrawal } from 'Operation';
 
-export interface Wallet {
+export interface Layer2Wallet {
+  getAddress(): string;
+
   /**
    * Get a collection of a triples consisting of the token symbol, available
    * balance and a flag if such a balance is verified or not.
