@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": "10.18.1"
+  },
   "files": [
     "dist"
   ],
