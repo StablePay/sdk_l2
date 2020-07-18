@@ -4,13 +4,37 @@
 
 **This library and its docs are still in development.**
 
-## Usage
-
-TODO
-
 ## Installing
 
-TODO
+Using npm:
+
+```sh
+npm install @stablepay/sdk_l2
+```
+
+Using yarn:
+
+```sh
+yarn add @stablepay/sdk_l2
+```
+
+## Usage
+
+```js
+import { Layer2Manager, Layer2Type } from '@stablepay/sdk_l2'
+
+...
+...
+...
+
+export class SampleClass {
+  public async myFunction(): Promise<any> {
+    const layer2Instance = Layer2Manager.Instance;
+    const provider = await layer2Instance.getProviderByLayer2Type(Layer2Type.ZK_SYNC, 'ropsten');
+    return Promise.resolve(provider)
+  }
+}
+```
 
 ## Running unit tests
 

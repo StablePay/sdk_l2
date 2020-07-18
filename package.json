@@ -1,15 +1,22 @@
 {
   "name": "@stablepay/sdk_l2",
-  "version": "1.0.0",
-  "description": "StablePay JavaScript SDK for Layer 2 Library",
-  "main": "index.js",
+  "version": "1.0.2",
+  "description": "Official StablePay SDK for Ethereum Layer 2",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "directories": {
     "doc": "docs"
   },
   "scripts": {
+    "build": "bili",
+    "prepublishOnly": "npm run build",
+    "coverage": "jest --coverage",
     "test": "NODE_ENV=test jest",
     "test:dev": "NODE_ENV=test jest --watchAll",
-    "build": "tsc --project tsconfig.json",
     "prettier": "prettier  --write **/*.{ts,js}",
     "lint:ts": "npm run prettier && tslint -c tslint.json -t stylish --fix {src}/**/*.{ts}"
   },
@@ -19,15 +26,27 @@
   },
   "author": "https://stablepay.io/about",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/StablePay/sdk_l2/issues"
   },
   "homepage": "https://github.com/StablePay/sdk_l2#readme",
   "devDependencies": {
+    "@semantic-release/changelog": "^5.0.0",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/npm": "^7.0.4",
+    "@semantic-release/release-notes-generator": "^9.0.1",
     "@types/bn.js": "^4.11.6",
     "@types/jest": "^26.0.4",
+    "bili": "^5.0.5",
+    "husky": "^4.2.5",
     "jest": "^26.1.0",
     "prettier": "^2.0.5",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "semantic-release": "^17.0.4",
     "ts-jest": "^26.1.1",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
@@ -37,5 +56,11 @@
   "dependencies": {
     "ethers": "4.0.46",
     "zksync": "^0.5.14"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint:ts",
+      "pre-push": "yarn test"
+    }
   }
 }
