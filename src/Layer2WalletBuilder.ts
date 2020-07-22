@@ -1,5 +1,4 @@
 import { Layer2Wallet } from './Layer2Wallet';
-import { EthSigner } from './EthSigner';
 
 export interface Layer2WalletBuilder {
   /**
@@ -12,11 +11,14 @@ export interface Layer2WalletBuilder {
   fromMnemonic(words: string): Promise<Layer2Wallet>;
 
   /**
-   * Build a new layer-s wallet instance using a 'signer' object that is
-   * capable of signing ETH transactions and messages.
+   * Build a new layer-2 wallet instance using Layer2 Provider-specific
+   * options.
+   *
+   * @remarks
+   * Consult provider's documentation to learn about its specifc options.
    *
    * @param signer Signer object.
    * @returns Promise with the resulting layer-2 wallet.
    */
-  fromEthSigner(signer: EthSigner): Promise<Layer2Wallet>;
+  fromOptions(options: object): Promise<Layer2Wallet>;
 }

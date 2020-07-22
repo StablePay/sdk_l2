@@ -17,13 +17,6 @@ export interface StablePayLayer2Provider {
   getDescription(): string;
 
   /**
-   * Get a wallet builder specific for the current layer-2 provider instance.
-   *
-   * @returns Wallet builder for this layer-2 provider instance.
-   */
-  getWalletBuilder(): Layer2WalletBuilder;
-
-  /**
    * Get the layer-2 vendor that this layer-2 provider instance supports.
    *
    * @returns Layer-2 vendor that this layer-2 provider instance supports.
@@ -34,10 +27,19 @@ export interface StablePayLayer2Provider {
    * Get a collection of the supported tokens that the layer-2 vendor supports
    * for transactions or operations.
    *
+   * TODO: See If more information is needed, like address, # of decimals, etc
+   *
    * @returns Collection of the supported tokens that this layer-2 provider
    * supports.
    */
-  getSupportedTokens(): Set<string>;
+  getSupportedTokens(): Promise<Set<string>>;
+
+  /**
+   * Get a wallet builder specific for the current layer-2 provider instance.
+   *
+   * @returns Wallet builder for this layer-2 provider instance.
+   */
+  getLayer2WalletBuilder(): Layer2WalletBuilder;
 
   /**
    * Obtain de network-suggested fee to carry out a Withdrawal operation given

@@ -41,30 +41,65 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
   getName(): string {
     return ZkSyncStablePayLayer2Provider.name;
   }
+
   getDescription(): string {
     return 'Layer 2 provider for zkSync by StablePay';
-  }
-
-  getWalletBuilder(): Layer2WalletBuilder {
-    return this.walletBuilder;
   }
 
   getSupportedLayer2Type(): Layer2Type {
     return Layer2Type.ZK_SYNC;
   }
-  getSupportedTokens(): Set<string> {
-    throw new Error('Method not implemented.');
+
+  async getSupportedTokens(): Promise<Set<string>> {
+    const ret = new Set<string>();
+
+    const tokenInfoDict = await this.syncProvider.getTokens();
+    for (const symbol in tokenInfoDict) {
+      ret.add(symbol);
+    }
+
+    return ret;
   }
 
-  getWithdrawalFee(toAddress: string, tokenSymbol: string): Promise<string> {
-    throw new Error('Method not implemented.');
+  getLayer2WalletBuilder(): Layer2WalletBuilder {
+    return this.walletBuilder;
   }
-  getTransferFee(toAddress: string, tokenSymbol: string): Promise<string> {
-    throw new Error('Method not implemented.');
+
+  async getWithdrawalFee(
+    toAddress: string,
+    tokenSymbol: string
+  ): Promise<string> {
+    // Get fee information from zkSync network. Note that zkSync provides
+    // a gas fee and the zkSync proper fee. We are returning the total fee
+    // here.
+    const feeInfo = await this.syncProvider.getTransactionFee(
+      'Withdraw',
+      toAddress,
+      tokenSymbol
+    );
+
+    return feeInfo.totalFee.toString();
   }
+  async getTransferFee(
+    toAddress: string,
+    tokenSymbol: string
+  ): Promise<string> {
+    // Get fee information from zkSync network. Note that zkSync provides
+    // a gas fee and the zkSync proper fee. We are returning the total fee
+    // here.
+    const feeInfo = await this.syncProvider.getTransactionFee(
+      'Transfer',
+      toAddress,
+      tokenSymbol
+    );
+
+    return feeInfo.totalFee.toString();
+  }
+
   getReceipt(txHash: string): Promise<Receipt> {
     throw new Error('Method not implemented.');
   }
+
   getAccountHistory(address: string): Promise<Receipt> {
     throw new Error('Method not implemented.');
   }

@@ -5,6 +5,12 @@ export enum Layer2Type {
   LOOPRING = 'LRC',
 }
 
+export enum AccountBalanceState {
+  Pending = 'pending',
+  Commited = 'commited',
+  Verified = 'verified',
+}
+
 export enum OperationType {
   Deposit = 'Deposit',
   Transfer = 'Transfer',

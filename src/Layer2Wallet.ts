@@ -1,17 +1,32 @@
 import { AccountStream } from 'AccountStream';
-import { Result } from 'types';
+import { AccountBalanceState, Result } from './types';
 import { Deposit, Transfer, Withdrawal } from 'Operation';
 
 export interface Layer2Wallet {
+  /**
+   * Get the address associated with this Layer 2 Wallet.
+   *
+   * @returns The address bound to this layer 2 wallet.
+   */
   getAddress(): string;
 
   /**
-   * Get a collection of a triples consisting of the token symbol, available
-   * balance and a flag if such a balance is verified or not.
+   * Get the ETH balance in the layer-2 network.
    *
-   * @returns Promise of a collection of triples described previously.
+   * @returns Promise of the desired token's balance.
+   *
+   * @beta
    */
-  getTokenBalances(): Promise<[[string, string, boolean]]>;
+  getBalance(): Promise<string>;
+
+  /**
+   * Get the **verified** ETH balance in the layer-2 network.
+   *
+   * @returns Promise of the desired token's balance.
+   *
+   * @beta
+   */
+  getBalanceVerified(): Promise<string>;
 
   /**
    * Get the balance of the specified token in the layer-2 network. Use 'ETH'
@@ -19,6 +34,8 @@ export interface Layer2Wallet {
    *
    * @param tokenSymbol Token symbol whose balance wants to be known.
    * @returns Promise of the desired token's balance.
+   *
+   * @beta
    */
   getTokenBalance(tokenSymbol: string): Promise<string>;
 
@@ -28,8 +45,18 @@ export interface Layer2Wallet {
    *
    * @param tokenSymbol Token symbol whose balance wants to be known.
    * @returns Promise of the desired token's verified balance.
+   *
+   * @beta
    */
   getTokenBalanceVerified(tokenSymbol: string): Promise<string>;
+
+  /**
+   * Get a collection of a triples consisting of the token symbol, available
+   * balance and the balance's state (pending, commited, verified).
+   *
+   * @returns Promise of a collection of triples described previously.
+   */
+  getAccountBalances(): Promise<[string, string, AccountBalanceState][]>;
 
   /**
    * Make a deposit from layer 1 to layer 2 of the specified token in the

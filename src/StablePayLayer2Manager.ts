@@ -10,13 +10,6 @@ export class StablePayLayer2Manager {
     this.providerInstaces = new Map<string, StablePayLayer2Provider>();
   }
 
-  getBalance(layer2Type: Layer2Type, tokenSymbol: string): string {
-    throw new Error('Method not implemented.');
-  }
-  getBalanceVerified(layer2Type: Layer2Type, tokenSymbol: string): string {
-    throw new Error('Method not implemented.');
-  }
-
   /**
    * Get a layer-2 provider for the specified layer-2 supported vendor and
    * network (ropsten, rinkeby, mainnet, etc.)

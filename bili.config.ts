@@ -1,17 +1,17 @@
-import { Config } from "bili";
+import { Config } from 'bili';
 
 const config: Config = {
-    plugins: {
-        typescript2: {
-            tsconfigOverride: {
-                include: ["src"]
-            }
-        }
+  plugins: {
+    typescript2: {
+      tsconfigOverride: {
+        include: ['src'],
+      },
     },
-    input: "src/index.ts",
-    output: {
-        format: ["cjs", "esm"]
-    }
+  },
+  input: 'src/index.ts',
+  output: {
+    format: ['cjs', 'esm'],
+  },
 };
 
 export default config;

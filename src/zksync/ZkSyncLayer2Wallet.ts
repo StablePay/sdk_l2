@@ -1,5 +1,11 @@
 import { ZkSyncResult } from './ZkSyncResult';
-import { Layer2Type, Receipt, Result, Network } from '../types';
+import {
+  AccountBalanceState,
+  Layer2Type,
+  Receipt,
+  Result,
+  Network,
+} from '../types';
 import { Deposit, Transfer, Withdrawal } from '../Operation';
 import { Layer2Wallet } from '../Layer2Wallet';
 import { AccountStream } from '../AccountStream';
@@ -11,17 +17,45 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
   constructor(private syncWallet: zksync.Wallet) {}
 
   getAddress(): string {
-    throw new Error('Method not implemented.');
+    return this.syncWallet.address();
   }
 
-  getTokenBalances(): Promise<[[string, string, boolean]]> {
-    throw new Error('Method not implemented.');
+  async getBalance(): Promise<string> {
+    return (await this.syncWallet.getBalance('ETH')).toString();
   }
-  getTokenBalance(tokenSymbol: string): Promise<string> {
-    throw new Error('Method not implemented.');
+  async getBalanceVerified(): Promise<string> {
+    return (await this.syncWallet.getBalance('ETH', 'verified')).toString();
   }
-  getTokenBalanceVerified(tokenSymbol: string): Promise<string> {
-    throw new Error('Method not implemented.');
+
+  async getTokenBalance(tokenSymbol: string): Promise<string> {
+    return (await this.syncWallet.getBalance(tokenSymbol)).toString();
+  }
+  async getTokenBalanceVerified(tokenSymbol: string): Promise<string> {
+    return (
+      await this.syncWallet.getBalance(tokenSymbol, 'verified')
+    ).toString();
+  }
+
+  async getAccountBalances(): Promise<[string, string, AccountBalanceState][]> {
+    const ret: [string, string, AccountBalanceState][] = [];
+
+    const accountState = await this.syncWallet.getAccountState();
+    const balanceDicts: [any, AccountBalanceState][] = [
+      [accountState.verified, AccountBalanceState.Verified],
+      [accountState.committed, AccountBalanceState.Commited],
+      [accountState.depositing, AccountBalanceState.Pending],
+    ];
+
+    for (const [balanceDict, balanceState] of balanceDicts) {
+      for (const tokenSymbol in balanceDict.balances) {
+        ret.push([
+          tokenSymbol,
+          accountState.verified.balances[tokenSymbol].toString(),
+          balanceState,
+        ]);
+      }
+    }
+    return ret;
   }
 
   async deposit(deposit: Deposit): Promise<Result> {
