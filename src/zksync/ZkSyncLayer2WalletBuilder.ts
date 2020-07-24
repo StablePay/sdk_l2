@@ -3,14 +3,19 @@ import { Layer2Wallet } from '../Layer2Wallet';
 import { Network } from '../types';
 import { ZkSyncLayer2Wallet } from './ZkSyncLayer2Wallet';
 
-import * as zksync from 'zksync';
-//const zksync = await import('zksync');
+import { Provider, Wallet } from 'zksync';
+let zksync;
+(async () => {
+  zksync = await import('zksync');
+})()
+
+// const 
 import ethers from 'ethers';
 
 export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
   constructor(
     private network: Network,
-    private syncProvider: zksync.Provider
+    private syncProvider: Provider
   ) {}
 
   fromMnemonic(words: string): Promise<Layer2Wallet> {
@@ -27,8 +32,8 @@ export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
       );
 
       // Instantiate the zkSync wallet.
-      zksync.Wallet.fromEthSigner(ethWallet, this.syncProvider)
-        .then((syncWallet: zksync.Wallet) => {
+      Wallet.fromEthSigner(ethWallet, this.syncProvider)
+        .then((syncWallet: Wallet) => {
           resolve(new ZkSyncLayer2Wallet(syncWallet));
         })
         .catch((err: any) => {
@@ -59,8 +64,8 @@ export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
 
           // All initial validations done. Proceed to instantiate the zkSync
           // wallet.
-          zksync.Wallet.fromEthSigner(ethersSigner, this.syncProvider)
-            .then((syncWallet: zksync.Wallet) => {
+          Wallet.fromEthSigner(ethersSigner, this.syncProvider)
+            .then((syncWallet: Wallet) => {
               resolve(new ZkSyncLayer2Wallet(syncWallet));
             })
             .catch((err) => {
