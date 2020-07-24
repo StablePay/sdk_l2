@@ -1,6 +1,7 @@
-import * as zksync from 'zksync';
 import { Receipt, Result } from '../types';
 import { Operation } from '../Operation';
+
+import * as zksync from 'zksync';
 
 export class ZkSyncResult implements Result {
   // This result holder has to be of type 'any' since the corresponding

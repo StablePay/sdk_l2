@@ -1,5 +1,4 @@
 import { StablePayLayer2Provider } from 'StablePayLayer2Provider';
-import * as zksync from 'zksync';
 import { Layer2Type, Receipt, Network } from '../types';
 import { ZkSyncLayer2WalletBuilder } from './ZkSyncLayer2WalletBuilder';
 import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
@@ -15,7 +14,8 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
 
   private constructor(
     private network: Network,
-    private syncProvider: zksync.Provider
+    // TODO private syncProvider: zksync.Provider
+    private syncProvider: any
   ) {
     this.walletBuilder = new ZkSyncLayer2WalletBuilder(
       this.network,
@@ -26,10 +26,13 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
   public static async newInstance(
     network: Network
   ): Promise<StablePayLayer2Provider> {
+    // Asynchronously load zksync library.
+    const zksync = await import('zksync');
+    // Create promise for new instance.
     return new Promise((resolve, reject) => {
       zksync
         .getDefaultProvider(network)
-        .then((syncProvider: zksync.Provider) => {
+        .then((syncProvider: any /* TODO zksync.Provider*/) => {
           resolve(new ZkSyncStablePayLayer2Provider(network, syncProvider));
         })
         .catch((err) => {

@@ -3,19 +3,15 @@ import { Layer2Wallet } from '../Layer2Wallet';
 import { Network } from '../types';
 import { ZkSyncLayer2Wallet } from './ZkSyncLayer2Wallet';
 
-import { Provider, Wallet } from 'zksync';
-let zksync;
-(async () => {
-  zksync = await import('zksync');
-})()
+// TODO import { Provider, Wallet } from 'zksync';
 
-// const 
+// const
 import ethers from 'ethers';
 
 export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
   constructor(
     private network: Network,
-    private syncProvider: Provider
+    private syncProvider: any /*TODO zksync.Provider*/
   ) {}
 
   fromMnemonic(words: string): Promise<Layer2Wallet> {
@@ -31,14 +27,17 @@ export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
         ethersProvider
       );
 
+      import('zksync').then((zksync) => {
+        zksync.Wallet.fromEthSigner(ethWallet, this.syncProvider)
+          .then((syncWallet: any /*TODO Wallet*/) => {
+            resolve(new ZkSyncLayer2Wallet(syncWallet));
+          })
+          .catch((err: any) => {
+            reject(err);
+          });
+      });
+
       // Instantiate the zkSync wallet.
-      Wallet.fromEthSigner(ethWallet, this.syncProvider)
-        .then((syncWallet: Wallet) => {
-          resolve(new ZkSyncLayer2Wallet(syncWallet));
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
     });
   }
 
@@ -64,13 +63,15 @@ export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
 
           // All initial validations done. Proceed to instantiate the zkSync
           // wallet.
-          Wallet.fromEthSigner(ethersSigner, this.syncProvider)
-            .then((syncWallet: Wallet) => {
-              resolve(new ZkSyncLayer2Wallet(syncWallet));
-            })
-            .catch((err) => {
-              reject(err);
-            });
+          import('zksync').then((zksync) => {
+            zksync.Wallet.fromEthSigner(ethersSigner, this.syncProvider)
+              .then((syncWallet: any /*zksync.Wallet*/) => {
+                resolve(new ZkSyncLayer2Wallet(syncWallet));
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          });
         })
         .catch((err) => reject(err));
     });

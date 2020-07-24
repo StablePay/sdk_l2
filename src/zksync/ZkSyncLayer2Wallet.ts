@@ -10,11 +10,11 @@ import { Deposit, Transfer, Withdrawal } from '../Operation';
 import { Layer2Wallet } from '../Layer2Wallet';
 import { AccountStream } from '../AccountStream';
 
-import * as zksync from 'zksync';
+// TODO import * as zksync from 'zksync';
 import ethers from 'ethers';
 
 export class ZkSyncLayer2Wallet implements Layer2Wallet {
-  constructor(private syncWallet: zksync.Wallet) {}
+  constructor(private syncWallet: any /* TODO zksync.Wallet*/) {}
 
   getAddress(): string {
     return this.syncWallet.address();
