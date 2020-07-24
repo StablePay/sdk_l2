@@ -4,6 +4,7 @@ import { Network } from '../types';
 import { ZkSyncLayer2Wallet } from './ZkSyncLayer2Wallet';
 
 import * as zksync from 'zksync';
+//const zksync = await import('zksync');
 import ethers from 'ethers';
 
 export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
