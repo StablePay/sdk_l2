@@ -9,11 +9,10 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v1
         with:
-          node-version: '10.18.1'
+          node-version: '10.17.0'
       - name: Installing dependencies
         run: yarn install
       - name: Building project
         run: yarn build
       - name: Running tests
         run: yarn test
-
