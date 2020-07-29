@@ -6,7 +6,7 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "engines": {
-    "node": "10.17.0"
+    "node": ">=10.17.0"
   },
   "files": [
     "dist"
