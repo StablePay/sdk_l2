@@ -31,7 +31,7 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
     // Create promise for new instance.
     return new Promise((resolve, reject) => {
       zksync
-        .getDefaultProvider(network)
+        .getDefaultProvider(network, 'HTTP')
         .then((syncProvider: any /* TODO zksync.Provider*/) => {
           resolve(new ZkSyncStablePayLayer2Provider(network, syncProvider));
         })
@@ -105,5 +105,11 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
 
   getAccountHistory(address: string): Promise<Receipt> {
     throw new Error('Method not implemented.');
+  }
+
+  async disconnect() {
+    if (this.syncProvider) {
+      await this.syncProvider.disconnect();
+    }
   }
 }

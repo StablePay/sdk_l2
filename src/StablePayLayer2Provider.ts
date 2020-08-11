@@ -78,4 +78,6 @@ export interface StablePayLayer2Provider {
   getReceipt(txHash: string): Promise<Receipt>;
 
   getAccountHistory(address: string): Promise<Receipt>;
+
+  disconnect(): Promise<void>;
 }

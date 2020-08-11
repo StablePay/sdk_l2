@@ -85,6 +85,12 @@ describe('Wallet-related functionality testing', () => {
     expect(provider.getName().length).toBeGreaterThan(0);
   });
 
+  afterAll(async () => {
+    if (provider) {
+      await provider.disconnect();
+    }
+  });
+
   // TODO: enable when mocked providers injected to manager.
   xtest('get balance', async () => {
     const address = await layer2Wallet.getAddress();
@@ -165,12 +171,12 @@ describe('Wallet-related functionality testing', () => {
     // A transfer fee can be obtained from LAYER TWO. Use the destination
     // address for the calculation.
     // TODO zksync failing here.
-    const transferFee = await provider.getTransferFee('ETH', toAddress);
+    //const transferFee = await provider.getTransferFee('ETH', toAddress);
 
     const transfer = new Transfer({
       toAddress,
       amount: '0.1', // Desired amount to withdraw.
-      fee: transferFee, // Desired fee to pay. This is a LAYER TWO fee.
+      fee: '0.01', //TODO: Use transferFee, // Desired fee to pay. This is a LAYER TWO fee.
       tokenSymbol: 'ETH',
     });
 
