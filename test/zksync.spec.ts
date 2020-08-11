@@ -14,6 +14,8 @@ require('dotenv').config();
 jest.setTimeout(120_000);
 
 // Global variables to all tests.
+const SAMPLE_ADDRESS = '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7';
+
 let layer2ProviderManager: StablePayLayer2Manager;
 let provider: StablePayLayer2Provider;
 let layer2WalletBuilder: Layer2WalletBuilder;
@@ -37,7 +39,7 @@ describe('Operation-related tests', () => {
       },
     };
     const fakeDeposit = Deposit.createDeposit({
-      toAddress: '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7',
+      toAddress: SAMPLE_ADDRESS,
       amount: '666.777',
       fee: '0.01',
     });
@@ -107,6 +109,11 @@ describe('Wallet-related functionality testing', () => {
     }
   });
 
+  xtest('get transaction fees', async () => {
+    const fee = await provider.getTransferFee(SAMPLE_ADDRESS, 'ETH');
+    expect(fee).toBeTruthy();
+  });
+
   // TODO: Enable when signer can be mocked simulating blocknative
   xtest('layer-2 wallet from custom signer', async () => {
     // TODO: complete
@@ -141,8 +148,7 @@ describe('Wallet-related functionality testing', () => {
     const myAddress = layer2Wallet.getAddress();
 
     // A withdrawal fee can be obtained from LAYER TWO.
-    // TODO zksync failing.
-    const withdrawalFee = await provider.getWithdrawalFee('ETH', myAddress);
+    const withdrawalFee = await provider.getWithdrawalFee(myAddress, 'ETH');
 
     const withdrawal = new Withdrawal({
       toAddress: myAddress,
@@ -170,13 +176,12 @@ describe('Wallet-related functionality testing', () => {
 
     // A transfer fee can be obtained from LAYER TWO. Use the destination
     // address for the calculation.
-    // TODO zksync failing here.
-    //const transferFee = await provider.getTransferFee('ETH', toAddress);
+    const transferFee = await provider.getTransferFee(toAddress, 'ETH');
 
     const transfer = new Transfer({
       toAddress,
       amount: '0.1', // Desired amount to withdraw.
-      fee: '0.01', //TODO: Use transferFee, // Desired fee to pay. This is a LAYER TWO fee.
+      fee: transferFee, // Desired fee to pay. This is a LAYER TWO fee.
       tokenSymbol: 'ETH',
     });
 
