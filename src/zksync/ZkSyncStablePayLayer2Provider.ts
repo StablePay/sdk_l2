@@ -3,6 +3,8 @@ import { Layer2Type, Receipt, Network } from '../types';
 import { ZkSyncLayer2WalletBuilder } from './ZkSyncLayer2WalletBuilder';
 import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
 
+import { ethers } from 'ethers';
+
 export async function getZkSyncProvider(
   network: 'localhost' | 'rinkeby' | 'ropsten' | 'mainnet'
 ): Promise<StablePayLayer2Provider> {
@@ -81,8 +83,12 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
       tokenSymbol
     );
 
-    return feeInfo.totalFee.toString();
+    // The total fee is returned as Wei. Convert to units.
+    const feeInUnits = ethers.utils.formatEther(feeInfo.totalFee);
+
+    return feeInUnits;
   }
+
   async getTransferFee(
     toAddress: string,
     tokenSymbol: string
@@ -96,7 +102,10 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
       tokenSymbol
     );
 
-    return feeInfo.totalFee.toString();
+    // The total fee is returned as Wei. Convert to units.
+    const feeInUnits = ethers.utils.formatEther(feeInfo.totalFee);
+
+    return feeInUnits;
   }
 
   getReceipt(txHash: string): Promise<Receipt> {

@@ -50,13 +50,13 @@ export interface StablePayLayer2Provider {
    * layer-2 network. Error will be raised if such parameter is required and
    * not provided.
    *
-   * @param tokenSymbol Token whose network fee wants to be known.
    * @param toAddress Optional. The intended destination address.
-   * @returns The network-suggested fee in the specified token's quantity.
+   * @param tokenSymbol Token whose network fee wants to be known.
+   * @returns The network-suggested fee in the token's units.
    * @throws Error if _toAddress_ is required by the vendor but not was not
    * provided.
    */
-  getWithdrawalFee(tokenSymbol: string, toAddress?: string): Promise<string>;
+  getWithdrawalFee(toAddress: string, tokenSymbol: string): Promise<string>;
 
   /**
    * Obtain de network-suggested fee to carry out a Transfer operation given
@@ -67,13 +67,13 @@ export interface StablePayLayer2Provider {
    * layer-2 network. Error will be raised if such parameter is required and
    * not provided.
    *
-   * @param tokenSymbol Token whose network fee wants to be known.
    * @param toAddress Optional. The intended destination address.
-   * @returns The network-suggested fee in the specified token's quantity.
+   * @param tokenSymbol Token whose network fee wants to be known.
+   * @returns The network-suggested fee in the token's units.
    * @throws Error if _toAddress_ is required by the vendor but not was not
    * provided.
    */
-  getTransferFee(tokenSymbol: string, toAddress: string): Promise<string>;
+  getTransferFee(toAddress: string, tokenSymbol: string): Promise<string>;
 
   getReceipt(txHash: string): Promise<Receipt>;
 
