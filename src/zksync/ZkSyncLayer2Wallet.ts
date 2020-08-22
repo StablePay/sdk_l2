@@ -7,8 +7,6 @@ import { Deposit, Transfer, Withdrawal } from '../Operation';
 import { Layer2Wallet } from '../Layer2Wallet';
 import { AccountStream } from '../AccountStream';
 
-
-
 export class ZkSyncLayer2Wallet implements Layer2Wallet {
   private isSigningWallet: boolean = false;
 
@@ -128,8 +126,15 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
       // Perform TRANSFER operation.
       zkSyncTransfer = await this.syncWallet.syncTransfer(zkSyncOperationData);
     } catch (err) {
-      // Possible error cause for exception is that the account is locked.
-      // This will always happen the first time a tx is attempted.
+      // Detect if the exception was caused by trying to transfer from a
+      // locked account.
+      if (!this.isAccountLockedError(err)) {
+        // The exception cause is NOT due to locked account state. Therefore,
+        // re-throw exception as it would have been done.
+        throw err;
+      }
+      // Cause for exception is that the account is locked. This will always
+      // happen the first time a tx is attempted.
       try {
         // Attempt to unlock account.
         await this.unlockAccount();
@@ -175,8 +180,15 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
         zkSyncOperationData
       );
     } catch (err) {
-      // Possible error cause for exception is that the account is locked.
-      // This will always happen the first time a tx is attempted.
+      // Detect if the exception was caused by trying to transfer from a
+      // locked account.
+      if (!this.isAccountLockedError(err)) {
+        // The exception cause is NOT due to locked account state. Therefore,
+        // re-throw exception as it would have been done.
+        throw err;
+      }
+      // Cause for exception is that the account is locked. This will always
+      // happen the first time a tx is attempted.
       try {
         // Attempt to unlock account.
         await this.unlockAccount();
@@ -197,6 +209,12 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
 
   getAccountStream(): AccountStream {
     throw new Error('Method not implemented.');
+  }
+
+  private isAccountLockedError(err: any) {
+    const msg: string = err.message.toUpperCase();
+    const result = msg.includes('ACCOUNT') && msg.includes('LOCKED');
+    return result;
   }
 
   private async unlockAccount() {
