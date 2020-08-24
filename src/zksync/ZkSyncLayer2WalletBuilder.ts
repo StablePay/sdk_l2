@@ -4,16 +4,11 @@ import { Layer2Wallet } from '../Layer2Wallet';
 import { Network } from '../types';
 import { ZkSyncLayer2Wallet } from './ZkSyncLayer2Wallet';
 
-
-
 // const
 import ethers from 'ethers';
 
 export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
-  constructor(
-    private network: Network,
-    private syncProvider: ZkSyncProvider
-  ) {}
+  constructor(private network: Network, private syncProvider: ZkSyncProvider) {}
 
   fromMnemonic(words: string): Promise<Layer2Wallet> {
     return new Promise((resolve, reject) => {
