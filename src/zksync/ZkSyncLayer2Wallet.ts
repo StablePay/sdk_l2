@@ -3,7 +3,7 @@ import { Wallet as ZkSyncWallet, Provider as ZkSyncProvider } from 'zksync';
 
 import { ZkSyncResult } from './ZkSyncResult';
 import { AccountBalanceState, Result, AccountBalances } from '../types';
-import { Deposit, Transfer, Withdrawal } from '../Operation';
+import { Deposit, Transfer, Withdrawal, Operation } from '../Operation';
 import { Layer2Wallet } from '../Layer2Wallet';
 import { AccountStream } from '../AccountStream';
 
@@ -101,10 +101,12 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
   async transfer(transfer: Transfer): Promise<Result> {
     const zksync = await import('zksync');
 
-    // Get amount and fee.
+    // Adjust transaction amount.
     const amount = zksync.utils.closestPackableTransactionAmount(
       ethers.utils.parseEther(transfer.amount)
     );
+
+    // Adjust fee amount.
     const fee = zksync.utils.closestPackableTransactionFee(
       ethers.utils.parseEther(transfer.fee)
     );
@@ -117,46 +119,20 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
       fee,
     };
 
-    let zkSyncTransfer: any;
-    try {
-      // Check signing wallet upgrade.
-      if (!this.isSigningWallet) {
-        await this.upgradeToSigningWallet();
-      }
-      // Perform TRANSFER operation.
-      zkSyncTransfer = await this.syncWallet.syncTransfer(zkSyncOperationData);
-    } catch (err) {
-      // Detect if the exception was caused by trying to transfer from a
-      // locked account.
-      if (!this.isAccountLockedError(err)) {
-        // The exception cause is NOT due to locked account state. Therefore,
-        // re-throw exception as it would have been done.
-        throw err;
-      }
-      // Cause for exception is that the account is locked. This will always
-      // happen the first time a tx is attempted.
-      try {
-        // Attempt to unlock account.
-        await this.unlockAccount();
-        // Retry operation now that the account is unlocked.
-        zkSyncTransfer = await this.syncWallet.syncTransfer(
-          zkSyncOperationData
-        );
-      } catch (innerErr) {
-        // Do nothing with this inner exception. Just log.
-        // TODO decide on logging lib.
-        // Throw original exception.
-        throw err;
-      }
-    }
+    const operationFn = () => {
+      return this.syncWallet.syncTransfer(zkSyncOperationData);
+    };
 
-    return new ZkSyncResult(zkSyncTransfer, transfer);
+    return this.doOperation(operationFn, transfer);
   }
 
   async withdraw(withdrawal: Withdrawal): Promise<Result> {
     const zksync = await import('zksync');
 
+    // Adjust transaction amount.
     const amount = ethers.utils.parseEther(withdrawal.fee);
+
+    // Adjust fee amount.
     const fee = zksync.utils.closestPackableTransactionFee(
       ethers.utils.parseEther(withdrawal.fee)
     );
@@ -169,16 +145,26 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
       fee,
     };
 
-    let zkSyncWithdrawal: any;
+    const operationFn = () => {
+      return this.syncWallet.withdrawFromSyncToEthereum(zkSyncOperationData);
+    };
+
+    return this.doOperation(operationFn, withdrawal);
+  }
+
+  getAccountStream(): AccountStream {
+    throw new Error('Method not implemented.');
+  }
+
+  private async doOperation(operationFn: () => {}, operation: Operation) {
+    let operationResult: any;
     try {
       // Check signing wallet upgrade.
       if (!this.isSigningWallet) {
         await this.upgradeToSigningWallet();
       }
-      // Perform WITHDRAW operation.
-      zkSyncWithdrawal = await this.syncWallet.withdrawFromSyncToEthereum(
-        zkSyncOperationData
-      );
+      // Invoke wrapper zkSync operation.
+      operationResult = await operationFn();
     } catch (err) {
       // Detect if the exception was caused by trying to transfer from a
       // locked account.
@@ -193,9 +179,7 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
         // Attempt to unlock account.
         await this.unlockAccount();
         // Retry operation now that the account is unlocked.
-        zkSyncWithdrawal = await this.syncWallet.withdrawFromSyncToEthereum(
-          zkSyncOperationData
-        );
+        operationResult = await operationFn();
       } catch (innerErr) {
         // Do nothing with this inner exception. Just log.
         // TODO decide on logging lib.
@@ -204,11 +188,7 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
       }
     }
 
-    return new ZkSyncResult(zkSyncWithdrawal, withdrawal);
-  }
-
-  getAccountStream(): AccountStream {
-    throw new Error('Method not implemented.');
+    return new ZkSyncResult(operationResult, operation);
   }
 
   private isAccountLockedError(err: any) {
