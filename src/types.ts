@@ -45,13 +45,11 @@ export type Receipt = {
   amount: string;
   fee: string;
   blockNumber?: number;
-  nonce?: number;
   hash?: string;
   createdAt?: string;
   failReason?: string;
   committed?: boolean;
   verified?: boolean;
-  l2_data?: any;
 };
 
 export interface Result {

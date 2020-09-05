@@ -15,6 +15,10 @@ jest.setTimeout(120_000);
 
 // Global variables to all tests.
 const SAMPLE_ADDRESS = '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7';
+const SAMPLE_ZKSYNC_TX_HASH =
+  'sync-tx:53d7ce2f0fe0d40660b0cf2f53ae310223e57a86956b592672a2e1971e3979c6';
+const SAMPLE_ZKSYNC_TX_HASH_NO_PREFIX =
+  '53d7ce2f0fe0d40660b0cf2f53ae310223e57a86956b592672a2e1971e3979c6';
 
 let layer2ProviderManager: StablePayLayer2Manager;
 let provider: StablePayLayer2Provider;
@@ -24,7 +28,9 @@ let layer2Wallet: Layer2Wallet;
 
 describe('Operation-related tests', () => {
   test('depositResult', async () => {
+    // Test Setup.
     const fakeDepositResultHolder: any = {
+      txHash: SAMPLE_ZKSYNC_TX_HASH,
       awaitReceiptVerify: () => {
         return new Promise<zksync.types.PriorityOperationReceipt>((resolve) => {
           resolve({
@@ -52,6 +58,9 @@ describe('Operation-related tests', () => {
     const receipt = await fakeDepositResult.getReceiptVerify();
 
     // Expectations.
+    // Expect correct transaction hash without prefix.
+    expect(receipt.hash).toBe(SAMPLE_ZKSYNC_TX_HASH_NO_PREFIX);
+    // Expect deposit operation and rest of values.
     expect(receipt.operationType).toBe(OperationType.Deposit);
     expect(receipt.blockNumber).toBe(666);
     expect(receipt.tokenSymbol).toBe('ETH');

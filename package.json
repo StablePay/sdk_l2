@@ -1,6 +1,6 @@
 {
   "name": "@stablepay/sdk_l2",
-  "version": "0.0.15",
+  "version": "0.0.17",
   "description": "Official StablePay SDK for Ethereum Layer 2",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "ethers": "^5.0.0",
-    "zksync": "^0.6.0"
+    "zksync": "^0.6.5"
   },
   "husky": {
     "hooks": {
