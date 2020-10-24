@@ -1,8 +1,16 @@
 import { AccountStream } from 'AccountStream';
-import { AccountBalanceState, Result, AccountBalances } from './types';
+import { AccountBalanceState, Result, AccountBalances, Network } from './types';
 import { Deposit, Transfer, Withdrawal } from 'Operation';
 
 export interface Layer2Wallet {
+  /**
+   * Get the network this L2 wallet is bound to (mainnet, ropsten,
+   * rinkeby, etc)
+   *
+   * @returns The network this L2 wallet instance is connected to.
+   */
+  getNetwork(): Network;
+
   /**
    * Get the address associated with this Layer 2 Wallet.
    *

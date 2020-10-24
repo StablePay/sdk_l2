@@ -2,7 +2,12 @@ import { ethers } from 'ethers';
 import { Wallet as ZkSyncWallet, Provider as ZkSyncProvider } from 'zksync';
 
 import { ZkSyncResult } from './ZkSyncResult';
-import { AccountBalanceState, Result, AccountBalances } from '../types';
+import {
+  AccountBalanceState,
+  Result,
+  AccountBalances,
+  Network,
+} from '../types';
 import { Deposit, Transfer, Withdrawal, Operation } from '../Operation';
 import { Layer2Wallet } from '../Layer2Wallet';
 import { AccountStream } from '../AccountStream';
@@ -11,10 +16,15 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
   private isSigningWallet: boolean = false;
 
   constructor(
+    private network: Network,
     private syncWallet: ZkSyncWallet,
     private ethersSigner: ethers.Signer,
     private syncProvider: ZkSyncProvider
-  ) {}
+  ) { }
+
+  getNetwork(): Network {
+    return this.network;
+  }
 
   getAddress(): string {
     return this.syncWallet.address();
@@ -209,7 +219,8 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
     }
 
     // Generate set signing key tx.
-    const changePubKey = await this.syncWallet.setSigningKey();
+    const changePubKey = await this.syncWallet.setSigningKey(
+      { feeToken: 'ETH' });
 
     // Wait until the tx is committed.
     await changePubKey.awaitReceipt();

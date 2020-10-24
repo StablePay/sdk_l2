@@ -1,5 +1,5 @@
 import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
-import { Layer2Type, Receipt } from 'types';
+import { Layer2Type, Network, Receipt } from 'types';
 
 export interface StablePayLayer2Provider {
   /**
@@ -15,6 +15,14 @@ export interface StablePayLayer2Provider {
    * @returns Description of the layer-2 provider instance.
    */
   getDescription(): string;
+
+  /**
+   * Get the network this provider is bound to (mainnet, ropsten,
+   * rinkeby, etc)
+   *
+   * @returns The network this provider is connected to.
+   */
+  getNetwork(): Network;
 
   /**
    * Get the layer-2 vendor that this layer-2 provider instance supports.

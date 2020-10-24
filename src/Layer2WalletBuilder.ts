@@ -1,6 +1,15 @@
+import { Network } from 'types';
 import { Layer2Wallet } from './Layer2Wallet';
 
 export interface Layer2WalletBuilder {
+  /**
+   * Get the network this wallet builder instance is bound to (mainnet,
+   * ropsten, rinkeby, etc.)
+   *
+   * @returns The network this wallet builder instance is bound to.
+   */
+  getNetwork(): Network;
+
   /**
    * Build a new layer-2 wallet instance using user-provided mnemonics as a
    * source for signing.

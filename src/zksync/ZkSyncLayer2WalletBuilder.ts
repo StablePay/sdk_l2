@@ -1,14 +1,17 @@
+import ethers from 'ethers';
 import { Wallet as ZkSyncWallet, Provider as ZkSyncProvider } from 'zksync';
+
 import { Layer2WalletBuilder } from '../Layer2WalletBuilder';
 import { Layer2Wallet } from '../Layer2Wallet';
 import { Network } from '../types';
 import { ZkSyncLayer2Wallet } from './ZkSyncLayer2Wallet';
 
-// const
-import ethers from 'ethers';
-
 export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
   constructor(private network: Network, private syncProvider: ZkSyncProvider) {}
+
+  getNetwork(): Network {
+    return this.network;
+  }
 
   fromMnemonic(words: string): Promise<Layer2Wallet> {
     return new Promise((resolve, reject) => {
@@ -27,7 +30,12 @@ export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
         zksync.Wallet.fromEthSignerNoKeys(ethWallet, this.syncProvider)
           .then((syncWallet: ZkSyncWallet) => {
             resolve(
-              new ZkSyncLayer2Wallet(syncWallet, ethWallet, this.syncProvider)
+              new ZkSyncLayer2Wallet(
+                this.network,
+                syncWallet,
+                ethWallet,
+                this.syncProvider
+              )
             );
           })
           .catch((err: any) => {
@@ -68,6 +76,7 @@ export class ZkSyncLayer2WalletBuilder implements Layer2WalletBuilder {
               .then((syncWallet: ZkSyncWallet) => {
                 resolve(
                   new ZkSyncLayer2Wallet(
+                    this.network,
                     syncWallet,
                     ethersSigner,
                     this.syncProvider

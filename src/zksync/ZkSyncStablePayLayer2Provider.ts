@@ -51,6 +51,10 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
     return 'Layer 2 provider for zkSync by StablePay';
   }
 
+  getNetwork(): Network {
+    return this.network;
+  }
+
   getSupportedLayer2Type(): Layer2Type {
     return Layer2Type.ZK_SYNC;
   }

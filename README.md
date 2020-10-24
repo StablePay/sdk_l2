@@ -41,9 +41,11 @@ export class SampleClass {
 To run unit tests, within the project's root directory, just run
 
 ```bash
-$ npx jest
+$ yarn test
 ```
 
 ## Acknowledgments
 
-- Grant by [MakerDao](https://makerdao.com/en/)
+**Grant(s) by**:
+- [Ethereum Foundation](https://ethereum.foundation/)
+- [MakerDao](https://makerdao.com/en/)

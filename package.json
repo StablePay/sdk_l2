@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "ethers": "^5.0.0",
-    "zksync": "^0.6.5"
+    "zksync": "^0.7.5"
   },
   "husky": {
     "hooks": {

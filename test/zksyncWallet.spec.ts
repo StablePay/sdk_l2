@@ -2,7 +2,7 @@ import { mockDeep, MockProxy } from 'jest-mock-extended';
 import { Wallet as ZkSyncWallet, Provider as ZkSyncProvider } from 'zksync';
 import { ethers, BigNumber } from 'ethers';
 
-import { OperationType } from '../src/types';
+import { Network, OperationType } from '../src/types';
 import { Withdrawal, Transfer } from '../src/Operation';
 import { Layer2Wallet } from '../src/Layer2Wallet';
 import { ZkSyncLayer2Wallet } from '../src/zksync/ZkSyncLayer2Wallet';
@@ -15,6 +15,7 @@ jest.setTimeout(120_000);
 // Global variables to all tests.
 const SAMPLE_ADDRESS = '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7';
 const ETH_BALANCE = BigNumber.from('100000000000000000');
+const SAMPLE_NETWORK: Network = 'ropsten';
 
 let ethersSigner: MockProxy<ethers.Signer> & ethers.Signer;
 let zkSyncWallet: MockProxy<ZkSyncWallet> & ZkSyncWallet;
@@ -30,6 +31,7 @@ describe('zkSync Wallet-related functionality testing', () => {
 
     // Obtain the layer-2 wallet from provider-specific options.
     layer2Wallet = new ZkSyncLayer2Wallet(
+      SAMPLE_NETWORK,
       zkSyncWallet,
       ethersSigner,
       zkSyncProvider
