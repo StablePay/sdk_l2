@@ -20,7 +20,7 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
     private syncWallet: ZkSyncWallet,
     private ethersSigner: ethers.Signer,
     private syncProvider: ZkSyncProvider
-  ) { }
+  ) {}
 
   getNetwork(): Network {
     return this.network;
@@ -219,8 +219,9 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
     }
 
     // Generate set signing key tx.
-    const changePubKey = await this.syncWallet.setSigningKey(
-      { feeToken: 'ETH' });
+    const changePubKey = await this.syncWallet.setSigningKey({
+      feeToken: 'ETH',
+    });
 
     // Wait until the tx is committed.
     await changePubKey.awaitReceipt();

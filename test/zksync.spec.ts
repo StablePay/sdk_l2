@@ -2,8 +2,8 @@ import * as zksync from 'zksync';
 import { ZkSyncResult } from '../src/zksync/ZkSyncResult';
 import { Network, OperationType, Layer2Type } from '../src/types';
 import { Deposit, Withdrawal, Transfer } from '../src/Operation';
-import { StablePayLayer2Manager } from '../src/StablePayLayer2Manager';
-import { StablePayLayer2Provider } from '../src/StablePayLayer2Provider';
+import { Layer2Manager } from '../src/Layer2Manager';
+import { Layer2Provider } from '../src/Layer2Provider';
 import { ethers } from 'ethers';
 import { Layer2WalletBuilder } from '../src/Layer2WalletBuilder';
 import { Layer2Wallet } from '../src/Layer2Wallet';
@@ -20,8 +20,8 @@ const SAMPLE_ZKSYNC_TX_HASH =
 const SAMPLE_ZKSYNC_TX_HASH_NO_PREFIX =
   '53d7ce2f0fe0d40660b0cf2f53ae310223e57a86956b592672a2e1971e3979c6';
 
-let layer2ProviderManager: StablePayLayer2Manager;
-let provider: StablePayLayer2Provider;
+let layer2ProviderManager: Layer2Manager;
+let provider: Layer2Provider;
 let layer2WalletBuilder: Layer2WalletBuilder;
 let ethersSigner: ethers.Signer;
 let layer2Wallet: Layer2Wallet;
@@ -74,7 +74,7 @@ describe('Wallet-related functionality testing', () => {
 
   // Common setup.
   beforeAll(async () => {
-    layer2ProviderManager = StablePayLayer2Manager.Instance;
+    layer2ProviderManager = Layer2Manager.Instance;
 
     // Obtain reference to the L2 provider.
     provider = await layer2ProviderManager.getProviderByLayer2Type(

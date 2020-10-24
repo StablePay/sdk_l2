@@ -1,13 +1,13 @@
-import { StablePayLayer2Provider } from 'StablePayLayer2Provider';
+import { Layer2Provider } from 'Layer2Provider';
 import { Layer2Type, Network } from './types';
-import { getZkSyncProvider } from './zksync/ZkSyncStablePayLayer2Provider';
+import { getZkSyncProvider } from './zksync/ZkSyncLayer2Provider';
 
-export class StablePayLayer2Manager {
-  private readonly providerInstances: Map<string, StablePayLayer2Provider>;
-  public static readonly Instance = new StablePayLayer2Manager();
+export class Layer2Manager {
+  private readonly providerInstances: Map<string, Layer2Provider>;
+  public static readonly Instance = new Layer2Manager();
 
   private constructor() {
-    this.providerInstances = new Map<string, StablePayLayer2Provider>();
+    this.providerInstances = new Map<string, Layer2Provider>();
   }
 
   /**
@@ -28,7 +28,7 @@ export class StablePayLayer2Manager {
   async getProviderByLayer2Type(
     layer2Type: Layer2Type,
     network: Network
-  ): Promise<StablePayLayer2Provider> {
+  ): Promise<Layer2Provider> {
     // This is to add compatibility with the network label 'homestead' for
     // mainnet which appears in the ether library.
     if (network === 'homestead') {

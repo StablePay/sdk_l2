@@ -1,4 +1,4 @@
-import { StablePayLayer2Provider } from 'StablePayLayer2Provider';
+import { Layer2Provider } from 'Layer2Provider';
 import { Layer2Type, Receipt, Network } from '../types';
 import { ZkSyncLayer2WalletBuilder } from './ZkSyncLayer2WalletBuilder';
 import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
@@ -7,11 +7,11 @@ import { ethers } from 'ethers';
 
 export async function getZkSyncProvider(
   network: 'localhost' | 'rinkeby' | 'ropsten' | 'mainnet'
-): Promise<StablePayLayer2Provider> {
-  return ZkSyncStablePayLayer2Provider.newInstance(network);
+): Promise<Layer2Provider> {
+  return ZkSyncLayer2Provider.newInstance(network);
 }
 
-class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
+class ZkSyncLayer2Provider implements Layer2Provider {
   private walletBuilder: Layer2WalletBuilder;
 
   private constructor(
@@ -27,7 +27,7 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
 
   public static async newInstance(
     network: 'localhost' | 'rinkeby' | 'ropsten' | 'mainnet'
-  ): Promise<StablePayLayer2Provider> {
+  ): Promise<Layer2Provider> {
     // Asynchronously load zksync library.
     const zksync = await import('zksync');
     // Create promise for new instance.
@@ -35,7 +35,7 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
       zksync
         .getDefaultProvider(network, 'HTTP')
         .then((syncProvider: any /* TODO zksync.Provider*/) => {
-          resolve(new ZkSyncStablePayLayer2Provider(network, syncProvider));
+          resolve(new ZkSyncLayer2Provider(network, syncProvider));
         })
         .catch((err) => {
           reject(err);
@@ -44,7 +44,7 @@ class ZkSyncStablePayLayer2Provider implements StablePayLayer2Provider {
   }
 
   getName(): string {
-    return ZkSyncStablePayLayer2Provider.name;
+    return ZkSyncLayer2Provider.name;
   }
 
   getDescription(): string {

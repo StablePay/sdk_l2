@@ -1,7 +1,7 @@
 import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
 import { Layer2Type, Network, Receipt } from 'types';
 
-export interface StablePayLayer2Provider {
+export interface Layer2Provider {
   /**
    * Get the name of the layer-2 provider instance.
    *
