@@ -34,11 +34,11 @@ const l2WalletBuilder = l2Provider.getLayer2WalletBuilder();
 // Then, instantiate the wallet with the builder.
 // You may instantiate the wallet either from mnemonics or by
 // provider-specific options object. For ZkSync provider, "ethersSigner"
-// options is valid (signer from ethers.js signer object).Consult each
+// options is valid (signer from ethers.js signer object). Consult each
 // provider's specific options.
-const l2Wallet = await l2WalletBuilder.fromOptions{
+const l2Wallet = await l2WalletBuilder.fromOptions({
   ethersSigner: myInstantiatedEthersSignerJSObject
-}
+});
 
 
 async printMyTokenBalance(tokenSymbol: string) {
