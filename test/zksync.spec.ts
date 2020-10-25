@@ -27,7 +27,7 @@ let ethersSigner: ethers.Signer;
 let layer2Wallet: Layer2Wallet;
 
 describe('Operation-related tests', () => {
-  test('depositResult', async () => {
+  it('depositResult', async () => {
     // Test Setup.
     const fakeDepositResultHolder: any = {
       txHash: SAMPLE_ZKSYNC_TX_HASH,

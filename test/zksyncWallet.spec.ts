@@ -3,7 +3,7 @@ import { Wallet as ZkSyncWallet, Provider as ZkSyncProvider } from 'zksync';
 import { ethers, BigNumber } from 'ethers';
 
 import { Network, OperationType } from '../src/types';
-import { Withdrawal, Transfer } from '../src/Operation';
+import { Withdrawal, Transfer, Deposit } from '../src/Operation';
 import { Layer2Wallet } from '../src/Layer2Wallet';
 import { ZkSyncLayer2Wallet } from '../src/zksync/ZkSyncLayer2Wallet';
 
@@ -37,9 +37,11 @@ describe('zkSync Wallet-related functionality testing', () => {
       zkSyncProvider
     );
 
-    // mock setup
+    // Mock setup.
     zkSyncWallet.address.mockReturnValue(SAMPLE_ADDRESS);
     zkSyncWallet.getBalance.mockReturnValue(Promise.resolve(ETH_BALANCE));
+    // Fake upgrade to signing wallet method.
+    (layer2Wallet as any).upgradeToSigningWallet = () => Promise.resolve();
   });
 
   it('should get balance info from wallet', async () => {
@@ -52,6 +54,29 @@ describe('zkSync Wallet-related functionality testing', () => {
 
     // Expectations.
     expect(walletBalance).toBe(ETH_BALANCE.toString());
+  });
+
+  it('Should pass correct parameters for DEPOSIT operation', async () => {
+    // Test setup.
+    // Create DEPOSIT operation.
+    const fakeDeposit = Deposit.createTokenDeposit({
+      toAddress: SAMPLE_ADDRESS,
+      amount: '666.777',
+      fee: '0.01',
+      tokenSymbol: 'BAT',
+      approveForErc20: true,
+    });
+
+    // Method under test.
+    await layer2Wallet.deposit(fakeDeposit);
+
+    // Expectations.
+    expect(zkSyncWallet.depositToSyncFromEthereum).toHaveBeenCalledWith({
+      depositTo: fakeDeposit.toAddress,
+      token: fakeDeposit.tokenSymbol,
+      amount: ethers.utils.parseEther(fakeDeposit.amount),
+      approveDepositAmountForERC20: fakeDeposit.approveForErc20,
+    });
   });
 
   it('should unlock account if locked on Transfer txn', async () => {

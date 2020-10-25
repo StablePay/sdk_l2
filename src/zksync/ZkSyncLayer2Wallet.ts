@@ -104,7 +104,9 @@ export class ZkSyncLayer2Wallet implements Layer2Wallet {
       depositTo: this.syncWallet.address(),
       token: deposit.tokenSymbol,
       amount: ethers.utils.parseEther(deposit.amount),
+      approveDepositAmountForERC20: deposit.approveForErc20,
     });
+
     return new ZkSyncResult(zkSyncDeposit, deposit);
   }
 
