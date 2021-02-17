@@ -1,9 +1,16 @@
-name: BUILD SDK
-on: [pull_request]
+name: PUBLISH
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    # TODO: Remove
+    branches:
+      - auto_deploy
 
 jobs:
-  build:
-    name: Build
+  deploy:
+    name: Deploy to NPM
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
@@ -16,3 +23,5 @@ jobs:
         run: yarn build
       - name: Running tests
         run: yarn test
+      - name: Conditional publish to NPM
+        run: node .github/willPublish.js
