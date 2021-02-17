@@ -1,9 +1,5 @@
-name: PUBLISH
-on:
-  push:
-    branches:
-      - master
-  [pull_request]
+name: BUILD SDK
+on: [pull_request]
 
 jobs:
   deploy:
