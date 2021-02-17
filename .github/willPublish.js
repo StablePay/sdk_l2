@@ -110,6 +110,7 @@ async function main() {
   } else {
     console.log('FALSE');
   }
+  process.exit(0);
 }
 
 main();
