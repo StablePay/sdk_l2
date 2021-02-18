@@ -2,10 +2,7 @@ name: PUBLISH
 on:
   push:
     branches:
-      - master
-  pull_request:
-    # TODO: Remove
-    branches:
+      # TODO: Change to master, eventually...
       - auto_deploy
 
 jobs:
@@ -23,5 +20,12 @@ jobs:
         run: yarn build
       - name: Running tests
         run: yarn test
+      - name: Evaluate package versions
+        id: will_publish
+        run: echo ::set-output name=RESPONSE::$(node ./.github/willPublish.js)
       - name: Conditional publish to NPM
-        run: node .github/willPublish.js
+        if: ${{ endsWith(steps.will_publish.outputs.RESPONSE, '!!_DO_PUBLISH_!!') }}
+        run: echo I WILL PUBLISH
+      - name: No deploy publish to NPM sample
+        if: ${{ endsWith(steps.will_publish.outputs.RESPONSE, '!!_DO_NOT_PUBLISH_!!') }}
+        run: echo WONT PUBLISH :-(

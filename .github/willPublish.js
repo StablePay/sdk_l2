@@ -102,15 +102,16 @@ async function main() {
   const { merge, publish } = await checkMergePublish();
   // Process exit code different from zero means merge will be blocked.
   if (!merge) {
+    console.error('!!_DO_NOT_MERGE_!!');
+    // Exit abnormally.
     process.exit(1);
   }
 
   if (publish) {
-    console.log('TRUE');
+    console.log('!!_DO_PUBLISH_!!');
   } else {
-    console.log('FALSE');
+    console.log('!!_DO_NOT_PUBLISH_!!');
   }
-  process.exit(0);
 }
 
 main();
