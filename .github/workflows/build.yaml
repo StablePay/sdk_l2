@@ -3,7 +3,7 @@ on: [pull_request]
 
 jobs:
   deploy:
-    name: Deploy to NPM
+    name: Build
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
