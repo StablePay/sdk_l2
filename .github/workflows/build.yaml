@@ -16,5 +16,3 @@ jobs:
         run: yarn build
       - name: Running tests
         run: yarn test
-      - name: Conditional publish to NPM
-        run: node .github/willPublish.js
