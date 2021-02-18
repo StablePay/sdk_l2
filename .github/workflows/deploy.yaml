@@ -26,6 +26,6 @@ jobs:
         run: echo ::set-output name=RESPONSE::$(node ./.github/willPublish.js)
       - name: Conditional publish to NPM
         if: ${{ endsWith(steps.will_publish.outputs.RESPONSE, '!!_DO_PUBLISH_!!') }}
-        run: echo yarn publish --non-interactive $NODE_AUTH_TOKEN
+        run: yarn publish --non-interactive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
