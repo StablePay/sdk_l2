@@ -1,6 +1,7 @@
 import { Layer2Provider } from 'Layer2Provider';
 import { Layer2Type, Network } from './types';
 import { getZkSyncProvider } from './zksync/ZkSyncLayer2Provider';
+import { getLoopringProvider } from './loopring/LoopringLayer2Provider';
 
 export class Layer2Manager {
   private readonly providerInstances: Map<string, Layer2Provider>;
@@ -42,6 +43,12 @@ export class Layer2Manager {
         case Layer2Type.ZK_SYNC:
           if (!this.providerInstances.has(key)) {
             const newProvider = await getZkSyncProvider(network);
+            this.providerInstances.set(key, newProvider);
+          }
+          return this.providerInstances.get(key)!;
+        case Layer2Type.LOOPRING:
+          if (!this.providerInstances.has(key)) {
+            const newProvider = await getLoopringProvider(network);
             this.providerInstances.set(key, newProvider);
           }
           return this.providerInstances.get(key)!;
