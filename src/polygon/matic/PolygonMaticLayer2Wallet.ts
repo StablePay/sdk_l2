@@ -176,7 +176,7 @@ export class PolygonMaticLayer2Wallet implements Layer2Wallet {
         const sendOptions: SendOptions = {
           from: this.address,
           gasPrice: gasPrice.toString(),
-          onTransactionHash: (hash: any) => {
+          onTransactionHash: (hash: string) => {
             // Instantiate Polygon/Matic transaction result. As soon as we get
             // a transaction hash, we can resolve result with hash and the
             // receipt awaitable.
@@ -257,7 +257,148 @@ export class PolygonMaticLayer2Wallet implements Layer2Wallet {
   }
 
   async transfer(transfer: Transfer): Promise<Result> {
-    throw new Error('Not implemented');
+    if (transfer.tokenSymbol !== 'ETH') {
+      // Check if token other than ETH is supported.
+      if (!(transfer.tokenSymbol in this.tokenDataBySymbol)) {
+        throw new Error(`Token ${transfer.tokenSymbol} not supported`);
+      }
+    }
+
+    // Get the amount to deposit in Wei, BN type.
+    const transferAmountWeiBN = this.parseAmountToBN(
+      transfer.amount,
+      transfer.tokenSymbol
+    );
+
+    // Get current gas price within the Polygon network.
+    const gasPriceString: string = await this.maticPOSClient.web3Client.web3.eth.getGasPrice();
+    const gasPrice: BigNumber = BigNumber.from(gasPriceString);
+
+    const result = new Promise<Result>((resolveResult, rejectResult) => {
+      // Transfer awaitable is the final transaction receipt.
+      const receiptAwaitable = new Promise(async (resolveReceipt) => {
+        // Set send options either for ETH or any other ERC20 token.
+        const sendOptions: SendOptions = {
+          from: this.address,
+          gasPrice: gasPriceString,
+          onTransactionHash: (hash: string) => {
+            // Instantiate Polygon/Matic transaction result. As soon as we get
+            // a transaction hash, we can resolve result with hash and the
+            // receipt awaitable.
+            const polygonMaticOperationResult = new PolygonMaticResult(
+              {
+                hash,
+                awaitable: receiptAwaitable,
+              },
+              transfer,
+              gasPrice
+            );
+
+            // Resolve promise with result.
+            resolveResult(polygonMaticOperationResult);
+          },
+          onReceipt: (receipt: any) => {
+            // Resolve receipt promise.
+            resolveReceipt(receipt);
+          },
+          onError: (err: any) => {
+            // Reject promise in case of error.
+            rejectResult(err);
+          },
+        };
+
+        try {
+          // Obtain the address for the ERC-20 token contract. This includes
+          // ETH since it is implemented as an ERC-20 token within Polygon.
+          const tokenData = this.tokenDataBySymbol[transfer.tokenSymbol];
+
+          // Get token address within Polygon network. This is because TRANSFERS
+          // are internal within the L2 network.
+          const tokenAddress = tokenData.childAddress;
+
+          if (transfer.approveForErc20) {
+            // Check the current allowance first to see if we should call the
+            // approve function to increase allowance.
+
+            // this.maticPOSClient.
+
+            // Get user's address allowance.
+            const allowance = await this.maticPOSClient.getERC20Allowance(
+              this.address,
+              tokenAddress
+            );
+            const allowanceBN = this.parseAmountToBN(
+              allowance,
+              transfer.tokenSymbol
+            );
+
+            // Invoke approve if the allowance is not enough.
+            if (transferAmountWeiBN.gt(allowanceBN)) {
+              await this.maticPOSClient.approveERC20ForDeposit(
+                tokenAddress,
+                transferAmountWeiBN,
+                { from: this.address }
+              );
+            }
+          }
+
+          // Transfer the specified ERC-20 token to the destination address.
+          // const ret = await this.maticPOSClient.transferERC20Tokens(
+          //   tokenAddress,
+          //   transfer.toAddress,
+          //   transferAmountWeiBN,
+          //   {
+          //     from: this.address
+          //   }
+          // );
+
+          const contract = this.maticPOSClient.getERC20TokenContract(
+            tokenAddress,
+            false
+          );
+          const data = contract.methods
+            .transfer(transfer.toAddress, transferAmountWeiBN)
+            .encodeABI();
+          // TODO: Determine values.
+          const rawTx = {
+            from: this.address,
+            gasLimit: '0xfc95',
+            gasPrice: '0x4a817c800',
+            nonce: 0,
+            chainId: 80001,
+            value: '0x0',
+            to: tokenAddress,
+            data,
+          };
+          // const parentWeb3 = this.maticPOSClient.web3Client.getParentWeb3();
+          // const signedTx = await parentWeb3.eth.signTransaction(rawTx);
+          // console.log(signedTx);
+
+          const signedRawTx: string = await this.ethersSigner.signTransaction(
+            rawTx
+          );
+          console.log(signedRawTx);
+          this.maticPOSClient.web3Client.web3.eth.sendSignedTransaction(
+            signedRawTx,
+            (err, hash) => {
+              console.log(hash);
+            }
+          );
+
+          // parentWeb3.eth.sendSignedTransaction(signedRawTx);
+          // contract.methods.transfer(transfer.toAddress, transferAmountWeiBN).send(sendOptions, (txHash: string) => {
+          //   console.log(txHash);
+          // });
+
+          // console.log(ret);
+        } catch (err) {
+          // Reject transaction result if any exception thrown.
+          rejectResult(err);
+        }
+      });
+    });
+
+    return result;
   }
 
   async withdraw(withdrawal: Withdrawal): Promise<Result> {
