@@ -149,9 +149,8 @@ describe('Query-related tests', () => {
     const transfer: Transfer = new Transfer({
       tokenSymbol: 'ETH',
       toAddress,
-      amount: '0.01',
+      amount: '0.02',
       fee: '0.01',
-      approveForErc20: false, // This applies even for ETH within Polygon.
     });
 
     // Method under test.

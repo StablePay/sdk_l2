@@ -14,7 +14,9 @@ export class PolygonMaticLayer2WalletBuilder implements Layer2WalletBuilder {
   constructor(
     private network: Network,
     private layer2Provider: PolygonMaticLayer2Provider
-  ) {}
+  ) {
+    // Constructor placeholder.
+  }
 
   getNetwork(): Network {
     return this.network;

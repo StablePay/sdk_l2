@@ -34,10 +34,11 @@ export type GeneralProps = {
   amount: string;
   fee: string;
   tokenSymbol: string;
-  approveForErc20?: boolean;
 };
 
-export type DepositProps = GeneralProps;
+export type DepositProps = GeneralProps & {
+  approveForErc20: boolean;
+};
 
 export type OperationProps = GeneralProps & {
   type: OperationType;

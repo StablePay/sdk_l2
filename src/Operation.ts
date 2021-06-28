@@ -11,26 +11,18 @@ export abstract class Operation {
   public readonly amount: string;
   public readonly fee: string;
   public readonly tokenSymbol: string;
-  public readonly approveForErc20: boolean;
 
-  constructor({
-    type,
-    toAddress,
-    amount,
-    fee,
-    tokenSymbol,
-    approveForErc20,
-  }: OperationProps) {
+  constructor({ type, toAddress, amount, fee, tokenSymbol }: OperationProps) {
     this.type = type;
     this.toAddress = toAddress;
     this.amount = amount;
     this.fee = fee;
     this.tokenSymbol = tokenSymbol;
-    this.approveForErc20 = !!approveForErc20;
   }
 }
 
 export class Deposit extends Operation {
+  public readonly approveForErc20: boolean;
   public static createDeposit(props: {
     toAddress: string;
     amount: string;
@@ -47,6 +39,7 @@ export class Deposit extends Operation {
   }
   private constructor(props: DepositProps) {
     super({ ...props, type: OperationType.Deposit });
+    this.approveForErc20 = props.approveForErc20;
   }
 }
 

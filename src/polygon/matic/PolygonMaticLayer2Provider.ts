@@ -5,6 +5,10 @@ import { Layer2WalletBuilder } from 'Layer2WalletBuilder';
 import { TokenInfoMetadata, TokenData, TokenDataDict } from './types';
 
 import axios, { AxiosRequestConfig } from 'axios';
+import {
+  MATIC_ETH_TOKEN_ADDRESS_BY_NETWORK,
+  MATIC_TOKEN_INFO_BY_NETWORK,
+} from './constants';
 
 export async function getPolygonMaticProvider(
   network: Network
@@ -18,7 +22,7 @@ export class PolygonMaticLayer2Provider implements Layer2Provider {
   // Lazy load this member, so initialize to null.
   private _tokenDataBySymbol: TokenDataDict | null = null;
 
-  private constructor(private network: Network) {
+  private constructor(private readonly network: Network) {
     this.walletBuilder = new PolygonMaticLayer2WalletBuilder(
       this.network,
       this
@@ -176,8 +180,8 @@ export class PolygonMaticLayer2Provider implements Layer2Provider {
   }
 
   getTokenInfoByNetwork(): TokenInfoMetadata {
-    const tokenInfo: TokenInfoMetadata | undefined = this
-      .MATIC_TOKEN_INFO_BY_NETWORK[this.network];
+    const tokenInfo: TokenInfoMetadata | undefined =
+      MATIC_TOKEN_INFO_BY_NETWORK[this.network];
     if (!tokenInfo) {
       throw new Error(`Network ${this.network} not supported`);
     }
@@ -185,7 +189,7 @@ export class PolygonMaticLayer2Provider implements Layer2Provider {
   }
 
   getEthTokenAddressByNetwork(): string {
-    const ethAddress = this.MATIC_ETH_TOKEN_ADDRESS_BY_NETWORK[this.network];
+    const ethAddress = MATIC_ETH_TOKEN_ADDRESS_BY_NETWORK[this.network];
     if (!ethAddress) {
       throw new Error(`No ETH token address for network ${this.network}`);
     }
@@ -193,47 +197,11 @@ export class PolygonMaticLayer2Provider implements Layer2Provider {
     return ethAddress;
   }
 
-  private MATIC_TOKEN_INFO_BY_NETWORK: Record<
-    Network,
-    TokenInfoMetadata | undefined
-  > = {
-    localhost: undefined,
-    rinkeby: undefined,
-    ropsten: undefined,
-    mainnet: {
-      baseURL: 'https://tokenmapper.api.matic.today',
-      url: '/api/v1/mapping',
-      chainId: 137,
-      mapType: '["POS"]',
-      tokenType: 'ERC20',
-    },
-    goerli: {
-      baseURL: 'https://tokenmapper.api.matic.today',
-      url: '/api/v1/mapping',
-      chainId: 80001,
-      mapType: '["POS"]',
-      tokenType: 'ERC20',
-    },
-    // 'homestead' is being as synonym for 'mainnet'.
-    homestead: {
-      baseURL: 'https://tokenmapper.api.matic.today',
-      url: '/api/v1/mapping',
-      chainId: 137,
-      mapType: '["POS"]',
-      tokenType: 'ERC20',
-    },
-  };
-
-  private MATIC_ETH_TOKEN_ADDRESS_BY_NETWORK: Record<
-    Network,
-    string | undefined
-  > = {
-    localhost: undefined,
-    rinkeby: undefined,
-    ropsten: undefined,
-    mainnet: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-    goerli: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
-    // 'homestead' is being as synonym for 'mainnet'.
-    homestead: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-  };
+  getChildChainIdByNetwork(): number {
+    const tokenInfo = MATIC_TOKEN_INFO_BY_NETWORK[this.network];
+    if (!tokenInfo) {
+      throw new Error(`Network ${this.network} not supported`);
+    }
+    return tokenInfo.chainId;
+  }
 }

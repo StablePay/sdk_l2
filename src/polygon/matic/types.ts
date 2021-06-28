@@ -45,3 +45,14 @@ export class TokenData {
 }
 
 export type TokenDataDict = { [symbol: string]: TokenData };
+
+export type CanonicalEthTransaction = {
+  from: string;
+  gasLimit: string;
+  gasPrice: string;
+  nonce: number;
+  chainId: number;
+  value: string;
+  to: string;
+  data: string;
+};
