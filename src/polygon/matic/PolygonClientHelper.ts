@@ -135,21 +135,20 @@ export class PolygonClientHelper {
   }
 
   async createPOSERC20SignedBurnTx(
-    tokenAddress: string,
+    tokenChildAddress: string,
     userAddress: string,
-    transferAmountWeiBN: any,
+    burnAmountWeiBN: any,
     doSignTransaction: (txObject: CanonicalEthTransaction) => Promise<string>
   ): Promise<string> {
     // Get the ERC-20 token contract for the specified token address.
     const contract = this.maticPOSClient.getPOSERC20TokenContract(
-      tokenAddress,
+      tokenChildAddress,
       false // parent: false
     );
 
     // Create the TX object and encode its ABI.
     const contractMethodTxObject = contract.methods.withdraw(
-      userAddress,
-      this.encodeNumberToHex(transferAmountWeiBN)
+      this.encodeToHex(burnAmountWeiBN)
     );
     const data = contractMethodTxObject.encodeABI();
 
@@ -176,7 +175,7 @@ export class PolygonClientHelper {
       nonce,
       chainId: this.chainId,
       value: '0x00', // Intentionally left at zero.
-      to: tokenAddress,
+      to: tokenChildAddress,
       data,
     };
 
@@ -186,7 +185,7 @@ export class PolygonClientHelper {
     return signedRawTx;
   }
 
-  public encodeNumberToHex(number: BN | string | number) {
+  public encodeToHex(number: BN | string | number) {
     if (typeof number === 'number') {
       number = new BN(number);
     } else if (typeof number === 'string') {

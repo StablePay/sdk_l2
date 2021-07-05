@@ -176,13 +176,21 @@ describe('Query-related tests', () => {
 
     const withdrawal = new Withdrawal({
       toAddress: myAddress,
-      amount: '0.05', // Desired amount to withdraw.
+      amount: '0.06', // Desired amount to withdraw.
       fee: withdrawalFee, // Desired fee to pay. This is a LAYER TWO fee.
       tokenSymbol: 'ETH',
     });
 
     // Method under test.
-    await layer2Wallet.withdraw(withdrawal);
+    const withdrawResult = await layer2Wallet.withdraw(withdrawal);
+
+    // Get receipt.
+    const withdrawReceipt: Receipt = await withdrawResult.getReceipt();
+
+    // Expectations.
+    expect(withdrawResult.hash).toBeTruthy();
+    expect(withdrawReceipt.blockNumber).toBeTruthy();
+    expect(withdrawReceipt.blockNumber).toBeGreaterThan(0);
   });
 });
 

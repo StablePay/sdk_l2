@@ -363,8 +363,8 @@ export class PolygonMaticLayer2Wallet implements Layer2Wallet {
     );
 
     // Get current gas price within the Polygon network.
-    // const gasPriceString: string = await this.polygonClientHelper.getGasPrice();
-    // const gasPrice: BigNumber = BigNumber.from(gasPriceString);
+    const gasPriceString: string = await this.polygonClientHelper.getGasPrice();
+    const gasPrice: BigNumber = BigNumber.from(gasPriceString);
 
     // Obtain the address for the ERC-20 token contract. This includes
     // ETH since it is implemented as an ERC-20 token within Polygon.
@@ -374,14 +374,51 @@ export class PolygonMaticLayer2Wallet implements Layer2Wallet {
     // need to burn such tokens in within the L2 network.
     const tokenChildAddress = tokenData.childAddress;
 
-    const burnResult = await this.maticPOSClient.burnERC20(
-      tokenChildAddress,
-      withdrawalAmountWeiBN,
-      { from: this.address }
-    );
-    console.log(burnResult);
+    const result = new Promise<Result>((resolveResult, rejectResult) => {
+      // Transfer awaitable is the final transaction receipt.
+      const receiptAwaitable = new Promise(async (resolveReceipt) => {
+        try {
+          const signedRawTx: string = await this.polygonClientHelper.createPOSERC20SignedBurnTx(
+            tokenChildAddress,
+            this.address, // user address
+            withdrawalAmountWeiBN,
+            (txObject) => this.ethersSigner.signTransaction(txObject)
+          );
 
-    throw new Error('Not implemented');
+          this.polygonClientHelper
+            .sendSignedTransaction(signedRawTx)
+            .once('transactionHash', (txHash) => {
+              // Instantiate Polygon/Matic transaction result. As soon as we get
+              // a transaction hash, we can resolve result with hash and the
+              // receipt awaitable.
+              const polygonMaticOperationResult = new PolygonMaticResult(
+                {
+                  hash: txHash,
+                  awaitable: receiptAwaitable,
+                },
+                withdrawal,
+                gasPrice
+              );
+
+              // Resolve promise with result.
+              resolveResult(polygonMaticOperationResult);
+            })
+            .once('receipt', (receipt) => {
+              // Resolve receipt promise.
+              resolveReceipt(receipt);
+            })
+            .once('error', (error) => {
+              // Reject promise in case of error.
+              rejectResult(error);
+            });
+        } catch (err) {
+          // Reject transaction result if any exception thrown.
+          rejectResult(err);
+        }
+      });
+    });
+
+    return result;
   }
 
   async getAccountEvents(): Promise<EventEmitter> {
