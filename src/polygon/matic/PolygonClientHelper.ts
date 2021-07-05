@@ -1,6 +1,7 @@
 import { MaticPOSClient } from '@maticnetwork/maticjs';
 import Web3 from 'web3';
 import { CanonicalEthTransaction } from './types';
+import BN from 'bn.js';
 
 export class PolygonClientHelper {
   private readonly web3: Web3;
@@ -100,7 +101,7 @@ export class PolygonClientHelper {
     );
     const data = contractMethodTxObject.encodeABI();
 
-    // Estimate gas limit using a multiplier of 2.
+    // FIXME: Estimate gas limit using a multiplier of 2.
     const multiplier = 2;
     const gasLimitHex: string = await this.getGasLimit(
       contractMethodTxObject,
@@ -131,5 +132,69 @@ export class PolygonClientHelper {
     const signedRawTx: string = await doSignTransaction(txObject);
 
     return signedRawTx;
+  }
+
+  async createPOSERC20SignedBurnTx(
+    tokenAddress: string,
+    userAddress: string,
+    transferAmountWeiBN: any,
+    doSignTransaction: (txObject: CanonicalEthTransaction) => Promise<string>
+  ): Promise<string> {
+    // Get the ERC-20 token contract for the specified token address.
+    const contract = this.maticPOSClient.getPOSERC20TokenContract(
+      tokenAddress,
+      false // parent: false
+    );
+
+    // Create the TX object and encode its ABI.
+    const contractMethodTxObject = contract.methods.withdraw(
+      userAddress,
+      this.encodeNumberToHex(transferAmountWeiBN)
+    );
+    const data = contractMethodTxObject.encodeABI();
+
+    // FIXME: Estimate gas limit using a multiplier of 2.
+    const multiplier = 2;
+    const gasLimitHex: string = await this.getGasLimit(
+      contractMethodTxObject,
+      userAddress,
+      multiplier,
+      true
+    );
+
+    // Obtain the gas price from the Polygon network.
+    const gasPriceHex: string = await this.getGasPrice(true);
+
+    // Obtain sender's address nonce (transaction count).
+    const nonce: number = await this.getNonce(userAddress);
+
+    // Create the ETH transaction to invoke the withdrawal (burn) operation.
+    const txObject: CanonicalEthTransaction = {
+      from: userAddress,
+      gasLimit: gasLimitHex,
+      gasPrice: gasPriceHex,
+      nonce,
+      chainId: this.chainId,
+      value: '0x00', // Intentionally left at zero.
+      to: tokenAddress,
+      data,
+    };
+
+    // Sign the transaction locally.
+    const signedRawTx: string = await doSignTransaction(txObject);
+
+    return signedRawTx;
+  }
+
+  public encodeNumberToHex(number: BN | string | number) {
+    if (typeof number === 'number') {
+      number = new BN(number);
+    } else if (typeof number === 'string') {
+      if (number.slice(0, 2) === '0x') return number;
+      number = new BN(number);
+    }
+    if (BN.isBN(number)) {
+      return '0x' + number.toString(16);
+    }
   }
 }

@@ -100,7 +100,7 @@ describe('Query-related tests', () => {
     // Create Deposit data.
     const deposit = Deposit.createDeposit({
       toAddress: myAddress,
-      amount: '0.024', // Desired amount
+      amount: '0.02', // Desired amount
       fee: '0.01', // Desired fee. This is a LAYER ONE regular fee.
     });
 
@@ -163,6 +163,26 @@ describe('Query-related tests', () => {
     expect(transferResult.hash).toBeTruthy();
     expect(transferReceipt.blockNumber).toBeTruthy();
     expect(transferReceipt.blockNumber).toBeGreaterThan(0);
+  });
+
+  xit('Withdraw token within Polygon', async () => {
+    // Test setup.
+
+    // Withdraw back to the LAYER 1 wallet's address.
+    const myAddress = layer2Wallet.getAddress();
+
+    // A withdrawal fee from LAYER TWO.
+    const withdrawalFee = '0.01';
+
+    const withdrawal = new Withdrawal({
+      toAddress: myAddress,
+      amount: '0.05', // Desired amount to withdraw.
+      fee: withdrawalFee, // Desired fee to pay. This is a LAYER TWO fee.
+      tokenSymbol: 'ETH',
+    });
+
+    // Method under test.
+    await layer2Wallet.withdraw(withdrawal);
   });
 });
 

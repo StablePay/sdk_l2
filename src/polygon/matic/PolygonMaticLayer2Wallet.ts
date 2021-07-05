@@ -278,7 +278,7 @@ export class PolygonMaticLayer2Wallet implements Layer2Wallet {
     );
 
     // Get current gas price within the Polygon network.
-    const gasPriceString: string = await this.maticPOSClient.web3Client.web3.eth.getGasPrice();
+    const gasPriceString: string = await this.polygonClientHelper.getGasPrice();
     const gasPrice: BigNumber = BigNumber.from(gasPriceString);
 
     const result = new Promise<Result>((resolveResult, rejectResult) => {
@@ -343,6 +343,44 @@ export class PolygonMaticLayer2Wallet implements Layer2Wallet {
   }
 
   async withdraw(withdrawal: Withdrawal): Promise<Result> {
+    if (withdrawal.tokenSymbol !== 'ETH') {
+      // Check if token other than ETH is supported.
+      if (!(withdrawal.tokenSymbol in this.tokenDataBySymbol)) {
+        throw new Error(`Token ${withdrawal.tokenSymbol} not supported`);
+      }
+    }
+
+    if (withdrawal.toAddress !== this.address) {
+      throw new Error(
+        `Making a withdrawal to an address different from this wallet's is not supported. Address: ${withdrawal.toAddress}`
+      );
+    }
+
+    // Get the amount to withdraw in Wei, BN type.
+    const withdrawalAmountWeiBN = this.parseAmountToBN(
+      withdrawal.amount,
+      withdrawal.tokenSymbol
+    );
+
+    // Get current gas price within the Polygon network.
+    // const gasPriceString: string = await this.polygonClientHelper.getGasPrice();
+    // const gasPrice: BigNumber = BigNumber.from(gasPriceString);
+
+    // Obtain the address for the ERC-20 token contract. This includes
+    // ETH since it is implemented as an ERC-20 token within Polygon.
+    const tokenData = this.tokenDataBySymbol[withdrawal.tokenSymbol];
+
+    // Get token address within Polygon network. This is because WITHDRAWALS
+    // need to burn such tokens in within the L2 network.
+    const tokenChildAddress = tokenData.childAddress;
+
+    const burnResult = await this.maticPOSClient.burnERC20(
+      tokenChildAddress,
+      withdrawalAmountWeiBN,
+      { from: this.address }
+    );
+    console.log(burnResult);
+
     throw new Error('Not implemented');
   }
 

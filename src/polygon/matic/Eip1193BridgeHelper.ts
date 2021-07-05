@@ -44,7 +44,8 @@ export class Eip1193BridgeHelper extends Eip1193Bridge {
     }
 
     // Invoke parent's method now that the request object is clean.
-    return super.request(request);
+    const result = super.request(request);
+    return result;
   }
 
   private deleteParams(paramNames: Array<string>, params?: Array<any>) {

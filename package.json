@@ -42,7 +42,7 @@
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.4",
     "@semantic-release/release-notes-generator": "^9.0.1",
-    "@types/bn.js": "^4.11.6",
+    "@types/bn.js": "^5.1.0",
     "@types/jest": "^26.0.4",
     "bili": "^5.0.5",
     "cross-env": "^7.0.3",
