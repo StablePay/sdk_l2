@@ -1,6 +1,6 @@
 {
   "name": "@stablepay/sdk_l2",
-  "version": "0.0.36",
+  "version": "0.0.40",
   "description": "Official StablePay SDK for Ethereum Layer 2",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

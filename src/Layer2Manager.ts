@@ -81,6 +81,6 @@ export class Layer2Manager {
    * @beta
    */
   getSupportedLayer2Types(): Set<Layer2Type> {
-    return new Set([Layer2Type.ZK_SYNC, Layer2Type.LOOPRING]);
+    return new Set([Layer2Type.ZK_SYNC, Layer2Type.POLYGON_MATIC]);
   }
 }
