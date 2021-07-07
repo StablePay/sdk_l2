@@ -31,6 +31,7 @@ import {
 
 import { PolygonMaticResult } from './PolygonMaticResult';
 import { PolygonClientHelper } from './PolygonClientHelper';
+import { id } from 'ethers/lib/utils';
 
 export class PolygonMaticLayer2Wallet implements Layer2Wallet {
   private readonly accountStream: AccountStream;
@@ -422,6 +423,57 @@ export class PolygonMaticLayer2Wallet implements Layer2Wallet {
   }
 
   async getAccountEvents(): Promise<EventEmitter> {
+    const parentWeb3 = this.maticPOSClient.web3Client.parentWeb3;
+    const childWeb3 = this.maticPOSClient.web3Client.web3;
+    const txDetails = await childWeb3.eth.getTransactionReceipt(
+      '0x3c5824837e12ae64f9432c93e3087a195b9c940db5a5f2916227e9f509e7ae9c'
+    );
+    const block = txDetails.blockNumber;
+
+    const tokenInfo = this.polygonMaticProvider.getTokenInfoByNetwork();
+    const rootChainAddress = tokenInfo.rootChainAddress;
+
+    const exitResult = await this.maticPOSClient.exitERC20(
+      '0x3c5824837e12ae64f9432c93e3087a195b9c940db5a5f2916227e9f509e7ae9c',
+      {
+        from: this.address,
+      }
+    );
+
+    console.log(exitResult);
+
+    // const promise = new Promise(async (resolve, reject) => {
+    //   const filter = {
+    //     address: rootChainAddress,
+    //   };
+
+    //   const logsPromise = this.ethersSigner.provider?.getLogs(filter);
+    //   const logEvents = await logsPromise;
+
+    //   parentWeb3.eth.subscribe(
+    //     "logs",
+    //     { address: rootChainAddress },
+    //     async (error, result) => {
+    //       if (error) {
+    //         reject(error);
+    //       }
+
+    //       console.log(result);
+    //       if (result.data) {
+    //         const decodedTxParams = parentWeb3.eth.abi.decodeParameters(
+    //           ["uint256", "uint256", "bytes32"],
+    //           result.data
+    //         );
+    //         if (block <= decodedTxParams["1"]) {
+    //           resolve(result);
+    //         }
+    //       }
+    //     });
+    // });
+
+    // const result = await promise;
+    // console.log(result);
+
     throw new Error('Not implemented');
   }
 

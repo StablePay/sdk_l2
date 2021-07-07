@@ -10,6 +10,7 @@ export type TokenInfoMetadata = {
   chainId: number;
   mapType: string;
   tokenType: 'ERC20'; // Only Matic ERC20 token type is supported in this library.
+  rootChainAddress: string;
 };
 
 export class TokenData {
